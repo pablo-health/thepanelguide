@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Panel Guide — contracting with insurance plans yourself</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="A free, plain-language guide for therapists on Headway, Alma, Rula and similar platforms who are thinking about contracting with insurance plans directly.">
+<style>
+  :root{
+    --paper:#f5efe3; --paper-2:#ece4d3; --ink:#1f2a24; --ink-2:#4a5650;
+    --green:#2f5d48; --green-soft:#dfe8df; --rust:#a4532c; --rule:#d6cbb5;
+    --serif: "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  html,body{background:var(--paper);margin:0}
+  .site{background:var(--paper);color:var(--ink);font-family:var(--serif);
+    line-height:1.55;font-size:17px}
+  .proto{background:var(--ink);color:#e9e2d2;font:13px/1.4 var(--sans);
+    padding:10px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .proto b{color:#f2c9a8;letter-spacing:.06em;text-transform:uppercase;font-size:11px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px}
+  header.top{border-bottom:1px solid var(--rule)}
+  header.top .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:16px;padding-bottom:14px;flex-wrap:wrap;gap:8px}
+  .mark{font-weight:700;letter-spacing:.01em;font-size:18px}
+  .mark span{color:var(--rust)}
+  nav a{font:14px var(--sans);color:var(--ink-2);text-decoration:none;margin-left:16px}
+  nav a:hover{color:var(--green)}
+  .hero{padding:56px 0 40px}
+  .kicker{font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--rust)}
+  h1{font-size:46px;line-height:1.08;margin:12px 0 18px;font-weight:600;letter-spacing:-.01em}
+  .lede{font-size:20px;color:var(--ink-2);max-width:36em;margin:0}
+  .paths{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:32px}
+  .path{background:var(--paper-2);border-radius:10px;padding:16px 16px 14px;text-decoration:none;color:inherit;border:1px solid transparent}
+  .path:hover{border-color:var(--green)}
+  .path .n{font:600 12px var(--sans);color:var(--green);letter-spacing:.08em}
+  .path .t{font-weight:600;font-size:18px;margin:4px 0 2px}
+  .path .d{font:14px/1.4 var(--sans);color:var(--ink-2)}
+  section{padding:44px 0;border-top:1px solid var(--rule)}
+  h2{font-size:30px;line-height:1.15;margin:6px 0 14px;font-weight:600}
+  h3{font-size:19px;margin:26px 0 8px}
+  p{margin:0 0 14px}
+  .note{font:15px/1.5 var(--sans);background:var(--green-soft);border-left:3px solid var(--green);
+    padding:12px 16px;border-radius:0 8px 8px 0;margin:18px 0}
+  ul.tick,ol.steps{padding:0;margin:8px 0 14px;list-style:none;font-family:var(--sans);font-size:15.5px}
+  ul.tick li{padding:7px 0 7px 30px;position:relative;border-bottom:1px dashed var(--rule)}
+  ul.tick li:before{content:"";position:absolute;left:4px;top:11px;width:13px;height:13px;border:1.5px solid var(--green);border-radius:3px}
+  ul.tick li.done:before{background:var(--green)}
+  ul.tick li{cursor:pointer}
+  ol.steps{counter-reset:s}
+  ol.steps li{counter-increment:s;padding:8px 0 8px 40px;position:relative}
+  ol.steps li:before{content:counter(s);position:absolute;left:0;top:7px;width:26px;height:26px;border-radius:50%;
+    background:var(--ink);color:var(--paper);font:600 13px/26px var(--sans);text-align:center}
+  .timeline{display:grid;grid-template-columns:120px 1fr;gap:0;font-family:var(--sans);font-size:15.5px;margin-top:10px}
+  .timeline .when{font:600 13px var(--sans);color:var(--rust);padding:14px 12px 14px 0;border-right:2px solid var(--green)}
+  .timeline .what{padding:12px 0 12px 20px;border-bottom:1px solid var(--rule)}
+  .timeline .what b{display:block;font-family:var(--serif);font-size:17px;margin-bottom:2px}
+  table{width:100%;border-collapse:collapse;font:15px/1.4 var(--sans);margin:10px 0 6px}
+  th{text-align:left;font:600 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);
+    border-bottom:2px solid var(--ink);padding:8px 10px 6px 0}
+  td{border-bottom:1px solid var(--rule);padding:9px 10px 9px 0;vertical-align:top}
+  td:first-child{font-weight:600;white-space:nowrap}
+  details{font-family:var(--sans);font-size:15.5px;border-bottom:1px solid var(--rule);padding:10px 0}
+  details summary{cursor:pointer;font-family:var(--serif);font-size:18px;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary:after{content:"+";float:right;color:var(--green);font-family:var(--sans)}
+  details[open] summary:after{content:"–"}
+  details > div{padding-top:8px;color:var(--ink-2)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .res a{color:var(--green);text-decoration:none;font-weight:600}
+  .res a:hover{text-decoration:underline}
+  .res li{border-bottom:1px solid var(--rule);padding:8px 0;list-style:none}
+  .res ul{padding:0;margin:0;font:15px/1.4 var(--sans)}
+  .res li span{display:block;color:var(--ink-2);font-weight:400}
+  .book{display:grid;grid-template-columns:92px 1fr;gap:20px;align-items:start;background:var(--paper-2);border-radius:12px;padding:20px}
+  .cover{height:128px;border-radius:4px;background:linear-gradient(160deg,var(--green),#1d3a2d);color:#f5efe3;
+    font:600 11px/1.25 var(--serif);padding:10px;box-shadow:2px 3px 0 var(--rule)}
+  footer{background:var(--ink);color:#cfc7b6;font:13.5px/1.55 var(--sans);padding:28px 0 32px}
+  footer a{color:#f2c9a8}
+  footer .wrap{display:grid;gap:10px}
+  .stay{font-style:italic;color:var(--ink-2)}
+  .grp{font:600 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin:14px 0 0}
+  .grp + ul.tick{margin-top:2px}
+  .why{display:grid;gap:10px;margin:12px 0 6px}
+  .why div{background:var(--paper-2);border-radius:10px;padding:12px 16px;font:15px/1.5 var(--sans)}
+  .why b{display:block;font:600 17px var(--serif);margin-bottom:2px}
+  .src{font:14px var(--sans);color:var(--ink-2)}
+  .src a{color:var(--green)}
+  @media (max-width:640px){
+    .site{font-size:16px}
+    h1{font-size:34px}
+    .paths,.cols{grid-template-columns:1fr}
+    nav{display:none}
+    .timeline{grid-template-columns:84px 1fr}
+    td:first-child{white-space:normal}
+  }
+</style>
+</head>
+<body>
+<div class="site">
+
+  <header class="top"><div class="wrap">
+    <div class="mark">The Panel Guide<span>.</span></div>
+    <nav>
+      <a href="#decide">Deciding</a><a href="#timeline">Timeline</a><a href="#billing">Billing</a><a href="#resources">Resources</a>
+    </nav>
+  </div></header>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="kicker">Leaving the platforms · a free guide</div>
+      <h1>Running your own practice, one step at a time.</h1>
+      <p class="lede">For therapists who work through Headway, Alma, Rula or a similar platform and are thinking about contracting with insurance plans directly. What it takes, in what order, and where people get stuck.</p>
+      <div class="paths">
+        <a class="path" href="#decide"><div class="n">01</div><div class="t">Is it right for you?</div><div class="d">The trade-offs, honestly.</div></a>
+        <a class="path" href="#timeline"><div class="n">02</div><div class="t">The timeline</div><div class="d">Credentialing takes months. Start early.</div></a>
+        <a class="path" href="#billing"><div class="n">03</div><div class="t">Getting paid</div><div class="d">Claims, codes, denials, appeals.</div></a>
+      </div>
+    </div>
+
+    <section id="decide">
+      <div class="kicker">01 · Deciding</div>
+      <h2>Is going independent right for you?</h2>
+      <p>A platform does the credentialing, billing and chasing for you, and takes a share for it. On your own, you keep more of each session and take on that work yourself. Neither answer is wrong, and many therapists do both.</p>
+      <h3>Questions worth answering first</h3>
+      <ul class="tick">
+        <li>How much income do you need each month, and could you cover the gap while the first claims are paid?</li>
+        <li>Which one or two plans do most of your current and future clients have? Starting small is common advice.</li>
+        <li>How much paperwork can you take on, or would you pay a biller?</li>
+        <li>Do you mostly do short-term or long-term work? Plans review long-term care more closely.</li>
+        <li>Would some clients follow you, and would their plans be ones you're contracted with?</li>
+        <li>Do you want to keep some work on a platform while you build up?</li>
+      </ul>
+      <p class="stay">Staying on a platform, or keeping one alongside your own practice, is a good outcome too. This guide is for whoever wants to know what the other path looks like.</p>
+    </section>
+
+    <section id="timeline">
+      <div class="kicker">02 · The timeline</div>
+      <h2>What happens, in order</h2>
+      <p>Credentialing usually takes three to nine months per plan. Your in-network status on a platform belongs to the platform's contract with each plan, not to you, so it doesn't come with you. Most people start their own applications while still on the platform, so clients with those plans can follow without a gap.</p>
+      <div class="timeline">
+        <div class="when">Now</div>
+        <div class="what"><b>Get your identifiers in order</b>Your NPI (free from NPPES), a tax ID for the practice, malpractice coverage, and a complete, attested CAQH profile.</div>
+        <div class="when">Months 0–9</div>
+        <div class="what"><b>Apply to plans</b>Keep a log for each plan: who you spoke with, when, and the call reference number. If a panel says it's full, ask when to reapply. Six months is typical.</div>
+        <div class="when">Contract signed</div>
+        <div class="what"><b>Record the details</b>Note the effective date on the countersigned contract and keep a sheet of your contracted rate for each code and plan. Don't see clients under a plan before the effective date.</div>
+        <div class="when">Before day one</div>
+        <div class="what"><b>Set up billing and paperwork</b>Choose a clearinghouse or EHR, write your intake paperwork, and decide how you'll verify coverage.</div>
+        <div class="when">Ongoing</div>
+        <div class="what"><b>Stay current</b>Re-attest CAQH on its schedule, recredential every two to three years, and never let a license or malpractice policy lapse.</div>
+      </div>
+    </section>
+
+    <section id="first">
+      <div class="kicker">03 · Before the first session</div>
+      <h2>Check coverage first, every time</h2>
+      <p>Find out what a plan covers before the first session, not from a denied claim weeks later. Mental health benefits are sometimes run by a different company than the one on the card, so confirm who handles them.</p>
+      <div class="cols">
+        <div>
+          <h3>Ask the plan</h3>
+          <div class="grp">Is the client covered?</div>
+          <ul class="tick">
+            <li>Active on the session date, and are you in-network?</li>
+            <li>Any exclusions for your type of service?</li>
+          </ul>
+          <div class="grp">What will they owe?</div>
+          <ul class="tick">
+            <li>Copay or coinsurance</li>
+            <li>Deductible, and how much of it is left</li>
+            <li>Out-of-pocket maximum, and when the plan year resets</li>
+          </ul>
+          <div class="grp">Rules for the service</div>
+          <ul class="tick">
+            <li>Prior authorization or visit limits</li>
+            <li>Telehealth: covered, and which code and modifier the plan wants</li>
+          </ul>
+          <div class="grp">Where the claim goes</div>
+          <ul class="tick">
+            <li>Payer ID or mailing address for mental health claims</li>
+            <li>Log the call: date, name, reference number</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Have in your paperwork</h3>
+          <ul class="tick">
+            <li>Who is responsible for unpaid balances</li>
+            <li>That a diagnosis goes to the plan, and the plan may review records</li>
+            <li>Your missed-appointment policy</li>
+            <li>A release for claims, and assignment of benefits</li>
+            <li>A question about secondary insurance</li>
+            <li>For self-pay clients: a Good Faith Estimate, given within 1 business day of scheduling (3 if the visit is 10 or more business days away)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">Re-check benefits every January. Deductibles reset, and plans change with jobs.</div>
+    </section>
+
+    <section id="notes">
+      <div class="kicker">04 · Documentation</div>
+      <h2>Notes that hold up in a review</h2>
+      <p>On a platform, the platform deals with the plan. On your own, your notes are your evidence if a plan asks for records or wants money back.</p>
+      <details open><summary>What a reviewer looks for</summary><div>A billable diagnosis, symptoms and how they affect daily life, measurable goals, specific interventions tied to those goals, progress, and the risk picture. Standard measures like the PHQ-9 and GAD-7 help.</div></details>
+      <details><summary>The details people miss</summary><div>Write down how long the session really ran, because the billing code has to match it. Name the technique you used and how the client responded. Write notes within a day or two, and label a later one as a late entry. To correct a note, add a dated addendum and leave the original as it was.</div></details>
+      <details><summary>Telehealth notes</summary><div>You need a license where the client is during the session, so record their location every time. Note whether you met by video or phone, and that you confirmed who you were talking to. The first time, also record consent, why telehealth fits this client, and an emergency plan for where they are.</div></details>
+      <details><summary>Psychotherapy notes</summary><div>Keep process notes separate from the record. They don't go to plans, even in an audit.</div></details>
+    </section>
+
+    <section id="billing">
+      <div class="kicker">05 · Getting paid</div>
+      <h2>Claims, codes and deadlines</h2>
+      <table>
+        <tr><th>Item</th><th>The usual rule</th></tr>
+        <tr><td>Session length</td><td>90832 for 16–37 minutes, 90834 for 38–52, 90837 for 53 or more. Bill the time you actually spent.</td></tr>
+        <tr><td>Couples / family</td><td>90847 with the client present, 90846 without. 26 minutes or more.</td></tr>
+        <tr><td>Place of service</td><td>11 in the office. Telehealth: 10 if the client is at home, 02 anywhere else.</td></tr>
+        <tr><td>Modifiers</td><td>95 for video (some plans want GT), 93 for phone.</td></tr>
+        <tr><td>Filing deadline</td><td>Often 60 or 90 days in-network. Check each contract. A late in-network claim can't be billed to the client.</td></tr>
+        <tr><td>Proof of filing</td><td>Save the clearinghouse report showing each claim was received. It's your evidence if a plan says a claim came in late.</td></tr>
+      </table>
+      <p style="font:14px var(--sans);color:var(--ink-2)">Rules vary by plan and change over time. Treat this as a starting point and confirm with each payer.</p>
+
+      <h3>When a claim comes back denied</h3>
+      <p>Start with the reason code on the remittance. Most denials fall into one of three kinds, and each has a different fix.</p>
+      <div class="why">
+        <div><b>Something on the claim was wrong or missing</b>A code, a date, the client's member ID, the other insurance. Fix it and send a corrected claim, marked as a replacement rather than a new one.</div>
+        <div><b>Authorization was missing or ran out</b>Ask the plan whether it will authorize after the fact, then resubmit with the authorization number.</div>
+        <div><b>The plan says it wasn't medically necessary</b>Ask to speak with the plan's reviewing clinician. If that doesn't settle it, appeal in writing with notes that show symptoms, how they affect daily life, and progress toward goals.</div>
+      </div>
+      <p>If the plan still says no, the denial notice explains how to file an appeal and the deadline. After the plan's own appeal, most plans have to offer an independent external review, and your state's insurance department can help with plans it regulates.</p>
+      <p class="src">Sources: <a href="https://www.healthcare.gov/appeal-insurance-company-decision/">HealthCare.gov, appealing a health plan decision</a> · <a href="https://content.naic.org/state-insurance-departments">State insurance departments (NAIC)</a></p>
+    </section>
+
+    <section id="lines">
+      <div class="kicker">06 · Staying safe</div>
+      <h2>Bill exactly what happened</h2>
+      <p>A claim says who you saw, what you did, when, where, for how long, and what it cost. Keep every one of those true and most billing trouble never starts.</p>
+      <ul class="tick">
+        <li>The code matches the minutes on the clock</li>
+        <li>The place of service matches where the client actually was</li>
+        <li>The date is the day the session happened</li>
+        <li>The diagnosis is one your notes support</li>
+        <li>What the client pays follows your contract and your written policy, including copays</li>
+        <li>The original note stays as written; changes are dated additions</li>
+      </ul>
+      <p class="src">More in the HHS Office of Inspector General's <a href="https://oig.hhs.gov/compliance/general-compliance-program-guidance/">compliance guidance</a>, written for practices of every size.</p>
+    </section>
+
+    <section id="leaving">
+      <div class="kicker">07 · The transition</div>
+      <h2>Moving well</h2>
+      <ul class="tick">
+        <li>Read your platform agreement for the notice period, any terms about clients, and how to get copies of records</li>
+        <li>Find out what you can export before you give notice. Access to notes you wrote on a platform can end when you leave, and notes can matter years later, so keep your own copy if your agreement allows it.</li>
+        <li>Tell each client their options, including staying with the platform and another clinician</li>
+        <li>Line up start dates so there's no gap in coverage, license or malpractice</li>
+      </ul>
+    </section>
+
+    <section id="resources" class="res">
+      <div class="kicker">08 · Resources</div>
+      <h2>Where to look things up</h2>
+      <div class="cols">
+        <ul>
+          <li><a href="https://nppes.cms.hhs.gov">NPPES</a><span>Get or update your NPI. Free.</span></li>
+          <li><a href="https://proview.caqh.org">CAQH ProView</a><span>The profile most plans credential from.</span></li>
+          <li><a href="https://www.cms.gov/medicare/coding-billing/place-of-service-codes">CMS place-of-service codes</a><span>The official list.</span></li>
+          <li><a href="https://www.icd10data.com">ICD10Data</a><span>Check whether a diagnosis code is billable.</span></li>
+        </ul>
+        <ul>
+          <li><a href="https://www.cchpca.org">CCHP</a><span>Telehealth laws and policy by state.</span></li>
+          <li><a href="https://www.paritytrack.org">ParityTrack</a><span>Mental health parity laws and complaints.</span></li>
+          <li><a href="https://psypact.org">PsyPACT</a> and the counseling and social work compacts<span>Practicing across state lines.</span></li>
+          <li><a href="https://www.personcenteredtech.com">Person Centered Tech</a><span>HIPAA and technology for therapists.</span></li>
+        </ul>
+      </div>
+
+      <h3>Recommended reading</h3>
+      <div class="book">
+        <div class="cover">Navigating the Insurance Maze<br><br><span style="font-weight:400">Barbara Griswold, LMFT</span></div>
+        <div style="font:15px/1.5 var(--sans)">
+          <b style="font:600 18px var(--serif)">Navigating the Insurance Maze</b>, 10th edition (2025), by Barbara Griswold, LMFT. A thorough handbook on the insurance side of a therapy practice, from credentialing through audits, with a frank look at whether taking insurance suits you.
+          <div style="margin-top:8px"><a href="https://theinsurancemaze.com">theinsurancemaze.com</a></div>
+        </div>
+      </div>
+      <ul style="margin-top:14px">
+        <li><a href="https://www.guilford.com/books/The-Paper-Office-for-the-Digital-Age/Zuckerman-Kolmes/9781462528004">The Paper Office for the Digital Age</a>, 5th edition (2016), Edward Zuckerman and Keely Kolmes<span>Forms, records, consent and documentation, with reproducible handouts.</span></li>
+        <li><a href="https://wwnorton.com/books/9780393709483">Building Your Ideal Private Practice</a>, 2nd edition (2015), Lynn Grodzki<span>The business side of running a practice, insurance-based or private pay.</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <footer><div class="wrap">
+    <div><b style="color:#f5efe3">The Panel Guide</b> is a free guide from the team at <a href="https://pablo.health">Pablo</a>, who make practice software for therapists. Nothing here requires it. Spot something wrong or out of date? Tell us at <a href="mailto:guide@pablo.health">guide@pablo.health</a>, or talk it over with other clinicians at <a href="https://www.reddit.com/r/leavingtheplatforms/">r/leavingtheplatforms</a>.</div>
+    <div>This is general information, not legal, tax or billing advice. Rules differ by plan and state. Confirm with each payer.</div>
+  </div></footer>
+</div>
+<script>
+  document.querySelectorAll('ul.tick li').forEach(li=>li.addEventListener('click',()=>li.classList.toggle('done')));
+</script>
+</body>
+</html>
