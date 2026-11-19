@@ -85,6 +85,12 @@
   footer a{color:#f2c9a8}
   footer .wrap{display:grid;gap:10px}
   .stay{font-style:italic;color:var(--ink-2)}
+  sup.cite{font:600 10px var(--sans);line-height:0;margin-left:1px}
+  sup.cite a{color:var(--green);text-decoration:none}
+  ol.sources{font:14px/1.5 var(--sans);color:var(--ink-2);padding-left:20px;margin:6px 0 24px}
+  ol.sources li{margin:6px 0;scroll-margin-top:16px}
+  ol.sources a{color:var(--green)}
+  ul.tick li .ans{display:block;margin-top:4px;font-size:14px;line-height:1.45;color:var(--ink-2)}
   .takes{background:var(--green-soft);border-radius:12px;padding:22px 24px 10px;margin:0 0 44px}
   .takes h2{font-size:24px;margin-top:0}
   .takes ul.tick li{border-bottom-color:#c5d3c6}
@@ -132,7 +138,7 @@
       <h2>What it takes, honestly</h2>
       <p>Running your own insurance practice is real work, and it's yours to keep up. It's also very doable, one step at a time.</p>
       <ul class="tick">
-        <li><b>Months, not weeks.</b> Each plan credentials you separately, and each usually takes three to nine months.</li>
+        <li><b>Months, not weeks.</b> Each plan credentials you separately, and each usually takes two to four months, and some take longer.<sup class="cite"><a href="#src2">2</a></sup></li>
         <li><b>Paperwork that keeps going.</b> Licenses, malpractice, CAQH re-attestation and recredentialing all renew on their own clocks.</li>
         <li><b>Billing becomes your responsibility.</b> It doesn't have to be hard: most practice software checks coverage, files claims and flags denials for you. You still own the follow-up.</li>
         <li><b>Payment arrives later.</b> Plans usually pay weeks after the session, so plan for the gap.</li>
@@ -149,7 +155,7 @@
         <li>How much income do you need each month, and could you cover the gap while the first claims are paid?</li>
         <li>Which one or two plans do most of your current and future clients have? Starting small is common advice.</li>
         <li>How much paperwork can you take on, or would you pay a biller?</li>
-        <li>Do you mostly do short-term or long-term work? Plans review long-term care more closely.</li>
+        <li>Are you prepared to justify to a plan why a client needs more than about 20 sessions?<span class="ans">There's no fixed limit, but plans expect focused work on symptoms, and some credentialing applications ask how many of your cases finish within about 20 sessions.<sup class="cite"><a href="#src1">1</a></sup> Longer care is covered, even for years, when your treatment plan and notes show it's still needed, and a plan may ask to see them. Depth or growth work without symptom goals is the hardest to justify.</span></li>
         <li>Would some clients follow you, and would their plans be ones you're contracted with?</li>
         <li>Do you want to keep some work on a platform while you build up?</li>
       </ul>
@@ -159,18 +165,18 @@
     <section id="timeline">
       <div class="kicker">02 · The timeline</div>
       <h2>What happens, in order</h2>
-      <p>Credentialing usually takes three to nine months per plan. Your in-network status on a platform belongs to the platform's contract with each plan, not to you, so it doesn't come with you. Most people start their own applications while still on the platform, so clients with those plans can follow without a gap.</p>
+      <p>Credentialing usually takes two to four months per plan, sometimes longer.<sup class="cite"><a href="#src2">2</a></sup> Your in-network status on a platform belongs to the platform's contract with each plan, not to you, so it doesn't come with you. Most people start their own applications while still on the platform, so clients with those plans can follow without a gap.</p>
       <div class="timeline">
         <div class="when">Now</div>
         <div class="what"><b>Get your identifiers in order</b>Your NPI (free from NPPES), a tax ID for the practice, malpractice coverage, and a complete, attested CAQH profile.</div>
-        <div class="when">Months 0–9</div>
+        <div class="when">Months 0–6</div>
         <div class="what"><b>Apply to plans</b>Keep a log for each plan: who you spoke with, when, and the call reference number. If a panel says it's full, ask when to reapply. Six months is typical.</div>
         <div class="when">Contract signed</div>
         <div class="what"><b>Record the details</b>Note the effective date on the countersigned contract and keep a sheet of your contracted rate for each code and plan. Don't see clients under a plan before the effective date.</div>
         <div class="when">Before day one</div>
         <div class="what"><b>Set up billing and paperwork</b>Choose a clearinghouse or EHR, write your intake paperwork, and decide how you'll verify coverage.</div>
         <div class="when">Ongoing</div>
-        <div class="what"><b>Stay current</b>Re-attest CAQH on its schedule, recredential every two to three years, and never let a license or malpractice policy lapse.</div>
+        <div class="what"><b>Stay current</b>Re-attest CAQH on its schedule, recredential every three years,<sup class="cite"><a href="#src3">3</a></sup> and never let a license or malpractice policy lapse.</div>
       </div>
     </section>
 
@@ -211,7 +217,7 @@
             <li>Your missed-appointment policy</li>
             <li>A release for claims, and assignment of benefits</li>
             <li>A question about secondary insurance</li>
-            <li>For self-pay clients: a Good Faith Estimate, given within 1 business day of scheduling (3 if the visit is 10 or more business days away)</li>
+            <li>For self-pay clients: a Good Faith Estimate, given within 1 business day of scheduling (3 if the visit is 10 or more business days away)<sup class="cite"><a href="#src5">5</a></sup></li>
           </ul>
         </div>
       </div>
@@ -233,7 +239,7 @@
       <h2>Claims, codes and deadlines</h2>
       <table>
         <tr><th>Item</th><th>The usual rule</th></tr>
-        <tr><td>Session length</td><td>90832 for 16–37 minutes, 90834 for 38–52, 90837 for 53 or more. Bill the time you actually spent.</td></tr>
+        <tr><td>Session length</td><td>90832 for 16–37 minutes, 90834 for 38–52, 90837 for 53 or more.<sup class="cite"><a href="#src4">4</a></sup> Bill the time you actually spent.</td></tr>
         <tr><td>Couples / family</td><td>90847 with the client present, 90846 without. 26 minutes or more.</td></tr>
         <tr><td>Place of service</td><td>11 in the office. Telehealth: 10 if the client is at home, 02 anywhere else.</td></tr>
         <tr><td>Modifiers</td><td>95 for video (some plans want GT), 93 for phone.</td></tr>
@@ -296,6 +302,15 @@
           <li><a href="https://www.personcenteredtech.com">Person Centered Tech</a><span>HIPAA and technology for therapists.</span></li>
         </ul>
       </div>
+
+      <h3 id="sources">Sources for the numbers</h3>
+      <ol class="sources">
+        <li id="src1">Barbara Griswold, <i>Navigating the Insurance Maze</i>, 10th edition (2025), chapter 5, page 23: plans &ldquo;typically want to see a high number of cases ending in less than 20 sessions.&rdquo; Also <a href="https://therathink.com/mental-health-insurance-credentialing/">TheraThink</a>: panels &ldquo;hope to see your services end within 20 sessions, often sooner.&rdquo;</li>
+        <li id="src2"><a href="https://www.simplepractice.com/resource/how-long-does-credentialing-take/">SimplePractice, How long does credentialing take</a>: 60 to 120 days per payer, assuming the application is complete, and some large plans and Medicaid plans take longer. Griswold (chapter 5, page 27) says the wait &ldquo;can sometimes be three to nine months,&rdquo; with about five as her average. Estimates differ with the plan, the state, and whether an application needs corrections.</li>
+        <li id="src3"><a href="https://www.bannerhealth.com/es/bhpprovider/about/qi-program/qm-education-spotlight/behind-the-scenes">Banner Health</a>, a health plan: &ldquo;Every 36 months, we re-credential each practitioner.&rdquo;</li>
+        <li id="src4"><a href="https://med.noridianmedicare.com/en/web/jfb/specialties/mental-health">Noridian Medicare (JF Part B), Mental health</a>: 90832 is 16 to 37 minutes, 90834 is 38 to 52, 90837 is 53 or longer.</li>
+        <li id="src5"><a href="https://www.cms.gov/files/document/nsa-gfe-decision-tree.pdf">CMS, Good Faith Estimate decision tree</a> (No Surprises Act): within 1 business day when scheduled 3 to 9 business days ahead, within 3 business days when 10 or more.</li>
+      </ol>
 
       <h3>Recommended reading</h3>
       <div class="book">
