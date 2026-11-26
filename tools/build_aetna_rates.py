@@ -553,7 +553,6 @@ page = f"""<!doctype html>
         {takeit_chart()}
       </div>
       {takeit_table()}
-      <p>Some Florida contracts pay less. A second Aetna fee schedule pays master's-level clinicians $60 for a 45-minute session and the same $60 for a 60-minute one (psychologists on it are paid $70). Most of the practices on it are community mental-health agencies; the independent practices on it have contracts dating from 2005 to 2009. Clinicians who joined those agencies recently are on it too, but no independent practice that contracted recently is. If you are independent and Aetna offers you $60, ask which fee schedule the offer is on and which plans it covers.</p>
     </section>
 
     <section id="by-license">
