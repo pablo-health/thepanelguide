@@ -523,7 +523,7 @@ page = f"""<!doctype html>
           <li>A few contracts (about 1%) also split each rate into office and non-office (facility, telehealth) prices. Only office or all-places prices are used here.</li>
           <li>Solo means a tax ID with exactly one clinician anywhere in the file. Everything else is a group. Platforms: the rates are what Aetna pays the platform's tax ID (Florida, 90837, read with the same 75/85/100 pattern). What a platform passes on to its clinicians is not in the file.</li>
           <li>Rates under $20 were dropped as placeholders. Some listed contracts are dormant: a clinician can be in the file and rarely bill Aetna.</li>
-          <li>Medians and ranges only. No individual clinician's rate is shown, and no row rests on fewer than 11 practices.</li>
+          <li>Medians and ranges only. No individual clinician's rate is shown, and we leave out any row based on fewer than 11 practices, so no number can point to one clinician.</li>
         </ul>
         <h3>The files we used</h3>
         <ul class="files">
@@ -628,7 +628,7 @@ page = f"""<!doctype html>
 
     <section id="table">
       <h2>Every license and code, solo and group</h2>
-      <p class="sub">Rows with fewer than 11 practices are left out. Scroll sideways on a phone.</p>
+      <p class="sub">Rows based on fewer than 11 practices are left out, so no number can point to one clinician. Scroll sideways on a phone.</p>
       <div class="tall">{full_table()}</div>
     </section>
 
