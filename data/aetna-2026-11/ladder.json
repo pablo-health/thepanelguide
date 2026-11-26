@@ -1,95 +1,95 @@
 {
-  "source": "Aetna Life Insurance Co. in-network rate file pl-sk (2026-11-05), matched to the NPI registry (Nov 2026); aggregates by Pablo",
-  "rows": [
-    {
-      "key": "GA|90837",
-      "state": "GA",
-      "code": "90837",
-      "masters": 79.29,
-      "np": 89.86,
-      "doctoral": 105.72,
-      "practices_on_it": 62
-    },
-    {
-      "key": "GA|90834",
-      "state": "GA",
-      "code": "90834",
-      "masters": 68.95,
-      "np": 78.14,
-      "doctoral": 91.93,
-      "practices_on_it": 64
-    },
-    {
-      "key": "GA|90832",
-      "state": "GA",
-      "code": "90832",
-      "masters": 52.72,
-      "np": 59.75,
-      "doctoral": 70.3,
-      "practices_on_it": 63
-    },
-    {
-      "key": "GA|90791",
-      "state": "GA",
-      "code": "90791",
-      "masters": 93.28,
-      "np": 105.71,
-      "doctoral": 124.37,
-      "practices_on_it": 64
-    },
-    {
-      "key": "GA|90847",
-      "state": "GA",
-      "code": "90847",
-      "masters": 68.95,
-      "np": 78.14,
-      "doctoral": 91.93,
-      "practices_on_it": 65
-    },
-    {
-      "key": "FL|90837",
-      "state": "FL",
-      "code": "90837",
-      "masters": 79.29,
-      "np": 89.86,
-      "doctoral": 105.72,
-      "practices_on_it": 5017
-    },
-    {
-      "key": "FL|90834",
-      "state": "FL",
-      "code": "90834",
-      "masters": 68.95,
-      "np": 78.14,
-      "doctoral": 91.93,
-      "practices_on_it": 5075
-    },
-    {
-      "key": "FL|90832",
-      "state": "FL",
-      "code": "90832",
-      "masters": 52.72,
-      "np": 59.75,
-      "doctoral": 70.3,
-      "practices_on_it": 5034
-    },
-    {
-      "key": "FL|90791",
-      "state": "FL",
-      "code": "90791",
-      "masters": 93.28,
-      "np": 105.71,
-      "doctoral": 124.37,
-      "practices_on_it": 5088
-    },
-    {
-      "key": "FL|90847",
-      "state": "FL",
-      "code": "90847",
-      "masters": 68.95,
-      "np": 78.14,
-      "doctoral": 91.93,
-      "practices_on_it": 5049
-    }
-  ]
+ "source": "Aetna Life Insurance Co. in-network rate file pl-sk (2026-11-05), matched to the NPI registry (Nov 2026); aggregates by Pablo",
+ "rows": [
+  {
+   "key": "FL|90837",
+   "state": "FL",
+   "code": "90837",
+   "masters": 79.29,
+   "np": 89.86,
+   "doctoral": 105.72,
+   "practices_on_it": 5017
+  },
+  {
+   "key": "FL|90834",
+   "state": "FL",
+   "code": "90834",
+   "masters": 68.95,
+   "np": 78.14,
+   "doctoral": 91.93,
+   "practices_on_it": 5075
+  },
+  {
+   "key": "FL|90832",
+   "state": "FL",
+   "code": "90832",
+   "masters": 52.72,
+   "np": 59.75,
+   "doctoral": 70.3,
+   "practices_on_it": 5034
+  },
+  {
+   "key": "FL|90791",
+   "state": "FL",
+   "code": "90791",
+   "masters": 93.28,
+   "np": 105.71,
+   "doctoral": 124.37,
+   "practices_on_it": 5088
+  },
+  {
+   "key": "FL|90847",
+   "state": "FL",
+   "code": "90847",
+   "masters": 68.95,
+   "np": 78.14,
+   "doctoral": 91.93,
+   "practices_on_it": 5049
+  },
+  {
+   "key": "GA|90837",
+   "state": "GA",
+   "code": "90837",
+   "masters": 79.29,
+   "np": 89.86,
+   "doctoral": 105.72,
+   "practices_on_it": 62
+  },
+  {
+   "key": "GA|90834",
+   "state": "GA",
+   "code": "90834",
+   "masters": 68.95,
+   "np": 78.14,
+   "doctoral": 91.93,
+   "practices_on_it": 64
+  },
+  {
+   "key": "GA|90832",
+   "state": "GA",
+   "code": "90832",
+   "masters": 52.72,
+   "np": 59.75,
+   "doctoral": 70.3,
+   "practices_on_it": 63
+  },
+  {
+   "key": "GA|90791",
+   "state": "GA",
+   "code": "90791",
+   "masters": 93.28,
+   "np": 105.71,
+   "doctoral": 124.37,
+   "practices_on_it": 64
+  },
+  {
+   "key": "GA|90847",
+   "state": "GA",
+   "code": "90847",
+   "masters": 68.95,
+   "np": 78.14,
+   "doctoral": 91.93,
+   "practices_on_it": 65
+  }
+ ]
 }
