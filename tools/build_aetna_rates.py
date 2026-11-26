@@ -144,12 +144,10 @@ def range_chart(label: str, groups: list[tuple[str, list[tuple[int, dict | None,
                 lines.append('<div class="rs"></div>')
                 continue
             tip = (f"{title}: median {money(r['median'])}; middle half {money(r['p25'])} to {money(r['p75'])}; "
-                   f"10th to 90th {money(r['p10'])} to {money(r['p90'])}; {r['practices']:,} practices")
-            w_l, w_r = x(r["p10"], d), f"{100 * (r['p90'] - r['p10']) / (d[1] - d[0]):.2f}%"
+                   f"{r['practices']:,} practices")
             b_l, b_r = x(r["p25"], d), f"{max(0.6, 100 * (r['p75'] - r['p25']) / (d[1] - d[0])):.2f}%"
             lines.append(
                 f'<div class="rs c{si}" title="{e(tip)}">'
-                f'<i class="wh" style="left:{w_l};width:{w_r}"></i>'
                 f'<i class="bx" style="left:{b_l};width:{b_r}"></i>'
                 f'<i class="dt" style="left:{x(r["median"], d)}"></i></div>'
             )
@@ -163,7 +161,8 @@ def range_chart(label: str, groups: list[tuple[str, list[tuple[int, dict | None,
 
 def license_chart() -> str:
     rows = [r for r in rates if r["code"] == "90837" and r["practice"] == "solo" and r["license"] in LICENSES]
-    d = domain(min(r["p10"] for r in rows), max(r["p90"] for r in rows))
+    refs = [FL[RUNG_OF[l]] for l in LICENSES]
+    d = domain(min([r["p25"] for r in rows] + refs), max([r["p75"] for r in rows] + refs))
     groups = []
     for l in LICENSES:
         series = []
@@ -177,7 +176,8 @@ def license_chart() -> str:
 
 def code_chart(st: str) -> str:
     allm = [r for r in rates if r["license"] == "master's"]
-    d = domain(min(r["p10"] for r in allm), max(r["p90"] for r in allm))
+    refs = [ladder[f"{s}|{c}"]["masters"] for s in STATE for c in CODES]
+    d = domain(min([r["p25"] for r in allm] + refs), max([r["p75"] for r in allm] + refs))
     groups = []
     for c in CODES:
         series = []
@@ -189,7 +189,7 @@ def code_chart(st: str) -> str:
 
 
 def takeit_chart() -> str:
-    out = ['<div class="stack" role="img" aria-label="Share of solo practices on, above and below the set 90837 rate, by license level, Georgia and Florida">']
+    out = ['<div class="stack" role="img" aria-label="How often Aetna pays solo practices exactly its standard 90837 rate, more, or less, by license level, Georgia and Florida">']
     for g in ["master's", "nurse practitioner", "doctoral"]:
         for st in ["GA", "FL"]:
             r = next((q for q in standard if q["license"] == g and q["state"] == st and q["code"] == "90837"), None)
@@ -198,8 +198,8 @@ def takeit_chart() -> str:
             on = 100 * r["on_standard"] / r["practices"]
             ab = 100 * r["above"] / r["practices"]
             be = 100 * r["below"] / r["practices"]
-            tip = (f"{STATE[st]}, {lic(g)}, solo, 90837: set rate {money(r['standard'])}; on it {r['on_standard']} "
-                   f"({pct(r['pct_on'])}); above {r['above']} ({pct(r['pct_above'])}); below {r['below']}; "
+            tip = (f"{STATE[st]}, {lic(g)}, solo, 90837: standard rate {money(r['standard'])}; paid exactly it {r['on_standard']} "
+                   f"({pct(r['pct_on'])}); paid more {r['above']} ({pct(r['pct_above'])}); paid less {r['below']}; "
                    f"{r['practices']:,} solo practices")
             segs = ""
             for val, cls in ((on, "on"), (ab, "ab"), (be, "be")):
@@ -241,7 +241,7 @@ def cohort_chart() -> tuple[str, list[str]]:
     order = sorted({(r["cohort_order"], r["cohort"]) for r in cohorts_all})
     dropped = sorted({r["cohort"] for r in cohorts_all if r["practices"] < MIN_PRACTICES and r["state"] == "GA"},
                      key=lambda c: next(o for o, n in order if n == c))
-    out = ['<div class="cchart" role="img" aria-label="Share of master\'s-level solo practices above the set 90837 rate, by NPI year, Georgia and Florida">']
+    out = ['<div class="cchart" role="img" aria-label="Share of master\'s-level solo practices Aetna pays more than its standard 90837 rate, by NPI year, Georgia and Florida">']
     for _, c in order:
         bars = ""
         for si, st in enumerate(["GA", "FL"]):
@@ -249,8 +249,8 @@ def cohort_chart() -> tuple[str, list[str]]:
             if r is None:
                 bars += f'<div class="cb"><span class="na">{st}: too few practices to show</span></div>'
                 continue
-            tip = (f"{STATE[st]}, NPI {c}: {pct(r['pct_above'])} above the set rate; on it {r['on_standard']}, "
-                   f"below {r['below_standard']}; median {money(r['median'])}; {r['practices']:,} master's-level solo practices")
+            tip = (f"{STATE[st]}, NPI {c}: {pct(r['pct_above'])} paid more than the standard rate; exactly it {r['on_standard']}, "
+                   f"less {r['below_standard']}; median {money(r['median'])}; {r['practices']:,} master's-level solo practices")
             bars += (f'<div class="cb" title="{e(tip)}"><i class="c{si}" style="width:{r["pct_above"]:.1f}%"></i>'
                      f'<span>{st} {pct(r["pct_above"])} <small>({r["practices"]:,})</small></span></div>')
         out.append(f'<div class="crow"><div class="rlab">{e(c)}</div><div>{bars}</div></div>')
@@ -273,7 +273,8 @@ def takeit_table() -> str:
                   key=lambda r: (0 if r["state"] == "GA" else 1, order.index(r["license"])))
     body = [[STATE[r["state"]], lic(r["license"]), money(r["standard"]), f"{r['practices']:,}", pct(r["pct_on"]),
              pct(r["pct_above"]), money(r["median_above"])] for r in rows]
-    return table(["State", "License", "Set rate", "Solo practices", "On it", "Above it", "Median if above"], body, 2)
+    return table(["State", "License", "Standard rate", "Solo practices", "Paid exactly it", "Paid more",
+                  "Median if paid more"], body, 2)
 
 
 def platforms_table() -> str:
@@ -288,7 +289,8 @@ def full_table() -> str:
                              0 if r["practice"] == "solo" else 1))
     body = [[STATE[r["state"]], lic(r["license"]), CODE_LABEL[r["code"]], r["practice"], f"{r['practices']:,}",
              money(r["p10"]), money(r["p25"]), money(r["median"]), money(r["p75"]), money(r["p90"])] for r in rows]
-    return table(["State", "License", "Code", "Practice", "Practices", "10th", "25th", "Median", "75th", "90th"], body, 4)
+    return table(["State", "License", "Code", "Practice", "Practices", "Low end (10%)", "Middle half from", "Median",
+                  "Middle half to", "High end (90%)"], body, 4)
 
 
 # ---------------------------------------------------------------- page
@@ -300,11 +302,12 @@ cov_fl = row(coverage, "FL|solo|90837")["pct_mapped"]
 cov_ga = row(coverage, "GA|solo|90837")["pct_mapped"]
 hw_lo = row(platforms, "Headway|lower")["masters"]
 hw_up = row(platforms, "Headway|upper")["masters"]
+fl_solo = row(rates, "FL|solo|master's|90837")
 cohort_html, cohort_dropped = cohort_chart()
 
-TITLE = "What Aetna actually pays therapists, by license"
-DESC = ("Aetna's published in-network rates for therapy codes in Georgia and Florida, by license: "
-        "the 75/85/100 ladder, how many solo practices are on the set rate, and what Aetna pays the platforms.")
+TITLE = "What Aetna pays therapists, by license and billing code"
+DESC = ("Aetna's published in-network rates for therapy codes in Georgia and Florida: the rate for each license, "
+        "how often Aetna pays solo practices exactly its standard rate, and what it pays the platforms.")
 
 page = f"""<!doctype html>
 <html lang="en">
@@ -340,6 +343,7 @@ page = f"""<!doctype html>
   nav a{{font:14px var(--sans);color:var(--ink-2);text-decoration:none;margin-left:16px}}
   nav a:hover{{color:var(--green)}}
   .hero{{padding:48px 0 32px}}
+  .dateline{{font:600 13px var(--sans);letter-spacing:.06em;color:var(--rust);margin:0 0 12px}}
   .kicker{{font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--rust)}}
   h1{{font-size:44px;line-height:1.08;margin:12px 0 10px;font-weight:600;letter-spacing:-.01em}}
   .byline{{font:14px/1.5 var(--sans);color:var(--ink-2);margin:0 0 18px}}
@@ -382,7 +386,6 @@ page = f"""<!doctype html>
   .rtrack > i.ref{{border-left:2px dashed var(--ink);z-index:1}}
   .rs{{position:relative;height:18px}}
   .rs i{{position:absolute;top:50%}}
-  .rs .wh{{height:2px;margin-top:-1px;background:var(--c);opacity:.7}}
   .rs .bx{{height:10px;margin-top:-5px;border-radius:5px;background:var(--c);opacity:.35}}
   .rs .dt{{width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--c);border:2px solid #fbf8f1;box-sizing:border-box;z-index:2}}
   .rs.c0{{--c:var(--c0)}} .rs.c1{{--c:var(--c1)}}
@@ -420,9 +423,13 @@ page = f"""<!doctype html>
   figure{{margin:18px 0 0}}
   figure img{{width:100%;height:auto;border-radius:10px;border:1px solid var(--rule);display:block}}
   figcaption{{font:14px/1.5 var(--sans);color:var(--ink-2);margin-top:8px}}
-  details.method{{font:14.5px/1.55 var(--sans);color:var(--ink-2)}}
+  figure.top{{margin:0 0 18px}}
+  details.method{{font:14.5px/1.55 var(--sans);color:var(--ink-2);background:#fbf8f1;border:1px solid var(--rule);border-radius:12px;padding:14px 18px;margin:0 0 22px}}
   details.method summary{{cursor:pointer;font:600 18px var(--serif);color:var(--ink)}}
-  details.method ul{{padding-left:1.2em;display:grid;gap:8px;margin:12px 0 0}}
+  details.method h3{{color:var(--ink);margin-top:20px}}
+  details.method p{{max-width:none}}
+  details.method p:first-of-type{{margin-top:12px}}
+  details.method ul{{padding-left:1.2em;display:grid;gap:8px;margin:12px 0 4px}}
   .closing{{font:15px/1.55 var(--sans);color:var(--ink-2)}}
   .closing a{{color:var(--green)}}
   footer{{background:var(--ink);color:#cfc7b6;font:13.5px/1.55 var(--sans);padding:28px 0 32px;margin-top:20px}}
@@ -453,15 +460,35 @@ page = f"""<!doctype html>
 
   <div class="wrap">
     <div class="hero">
-      <div class="kicker">Rates research · Georgia and Florida</div>
       <h1>{e(TITLE)}</h1>
+      <p class="dateline">Georgia and Florida · Aetna's published rate file, Nov 5, 2026</p>
       <p class="byline">By Kurt Niemi, who builds <a href="{e(OFFER)}">Pablo</a>. Hachi, an AI assistant, ran the numbers; Kurt questioned each step until they made sense.</p>
-      <p class="lede">Aetna pays by license. For a 60-minute session (90837) its set rate is <b>{money(FL["masters"])}</b> for master's-level clinicians, <b>{money(FL["np"])}</b> for nurse practitioners and <b>{money(FL["doctoral"])}</b> for psychologists and psychiatrists.</p>
-      <ul class="facts">
-        <li>From Aetna's published in-network rate file dated Nov 5, 2026.</li>
-        <li>Georgia and Florida only, so far.</li>
-        <li>Negotiated rates Aetna lists, not what anyone collected.</li>
-      </ul>
+      <figure class="top">
+        <img src="hachi-grilled.jpg" width="1200" height="800" alt="Illustration: a small shiba plushie, Hachi, sits at a table in an interrogation room while a man points at spreadsheets of insurance rates. Caption: Kurt grilled his AI assistant, until the numbers made sense.">
+        <figcaption>Hachi is the AI assistant that ran the numbers. It took a few rounds.</figcaption>
+      </figure>
+      <details class="method" id="method">
+        <summary>How we figured this out, and the full method</summary>
+        <p>Aetna publishes every rate it has agreed to in a huge public file. The first look made no sense: almost every practice had three different rates listed for the same session code, and the file gave no hint which one applied. An easy explanation was "plan tiers" or "office versus telehealth", and we nearly stopped there.</p>
+        <p>Kurt Niemi, who builds Pablo, kept pushing. Office versus non-office only gives two rates, not three, and the file showed the three prices were identical in every other way. So we looked at the numbers themselves. In every practice and every code, the three rates sat at exactly 75%, 85% and 100% of each other, to the cent.</p>
+        <p>That split is familiar: Medicare pays clinical social workers, marriage and family therapists and counselors 75% of the physician rate, and nurse practitioners 85%. Then we found contracts in the same Aetna file that do put the license code next to the rate (AJ/HO for social workers and master's-level clinicians, TD for nurse level, AF/AH for physicians and psychologists). Those labelled rates sit at the same 75%, 85% and 100%. Aetna's own provider newsletter calls 85% its "standard policy" for nurse practitioners, and an independent analysis of Aetna's data describes the same ladder.</p>
+        <p>So the three rates are a license ladder: master's level at 75% of the top rate, nurse practitioners at 85%, doctoral at 100%. Every practice's contract lists all three, and the one you are paid depends on your license. Once we read it that way, the numbers lined up, and they are what this page shows.</p>
+        <h3>The full method, and what it can't tell you</h3>
+        <ul>
+          <li>Source: Aetna Life Insurance Company's in-network rate file "pl-sk" (2026-11-05), used by 457 employer plans and covering Open Access Managed Choice and Choice POS II. Other Aetna files were not checked yet.</li>
+          <li>State and license come from the federal NPI registry (November 2026): practice-location state and primary taxonomy. Florida LMHCs are counted with LPCs.</li>
+          <li>The license rates: most practices list three rates per code at 75%, 85% and 100% of the top one, without saying which is which. A few contracts in the same file label their rates with Aetna's license modifiers (AJ/HO master's level, TD nurse, AF/AH physician or psychologist), and those sit at exactly the same 75/85/100. Each clinician here gets the rate for their own license. Outside support: Aetna's own March 2022 provider update calls 85% of the physician rate its "standard policy for mid-level practitioners" (nurse practitioners, physician assistants, nurse midwives, clinical nurse specialists), and Serif Health's September 2026 analysis of Aetna's data describes the same "standard rate ladder": nurse practitioners at 85% and master's level at 75% of the PhD rate. No public Aetna document found states the 75% for master's level in its own words.</li>
+          <li>Florida solo practices whose rates follow the 75/85/100 pattern: {pct(cov_fl)}; Georgia: {pct(cov_ga)}. The rest (mostly older round-dollar schedules in Georgia) don't say which rate is which license and are left out.</li>
+          <li>Standard rate: the state's most common rate for that license and code. "Exactly the standard rate" means paid that rate, to the cent.</li>
+          <li>Low end (10%) and high end (90%), in the full table: one practice in ten is paid less than the low end, and one in ten is paid more than the high end.</li>
+          <li>A few contracts (about 1%) also split each rate into office and non-office (facility, telehealth) prices. Only office or all-places prices are used here.</li>
+          <li>Solo means a tax ID with exactly one clinician anywhere in the file. Everything else is a group. Platforms: the rates are what Aetna pays the platform's tax ID (Florida, 90837, read with the same 75/85/100 pattern). What a platform passes on to its clinicians is not in the file.</li>
+          <li>Rates under $20 were dropped as placeholders. Some listed contracts are dormant: a clinician can be in the file and rarely bill Aetna.</li>
+          <li>Medians and ranges only. No individual clinician's rate is shown, and no row rests on fewer than 11 practices.</li>
+        </ul>
+      </details>
+      <p class="lede">Aetna pays by license. For a 60-minute session (90837) its standard rate is <b>{money(FL["masters"])}</b> for master's-level clinicians, <b>{money(FL["np"])}</b> for nurse practitioners and <b>{money(FL["doctoral"])}</b> for psychologists and psychiatrists.</p>
+      <p class="sub">Negotiated rates Aetna lists, not what anyone collected.</p>
       <div class="ask"><b>Want this for your state, your license or another insurer?</b>Email <a href="{ASK}">rates@pablo.health</a> and we'll run it.</div>
     </div>
 
@@ -469,30 +496,30 @@ page = f"""<!doctype html>
       <h2>Start here: what does Aetna pay someone like you?</h2>
       <ol class="steps">
         <li><b>Find your license</b> in <a href="#by-license">What each license is paid</a> (LCSW, LPC / LMHC, LMFT, nurse practitioner, psychologist, psychiatrist).</li>
-        <li><b>Look at the dashed line first.</b> That is Aetna's set rate for your license: what a practice on the standard contract is paid, and what a new contract usually starts at.</li>
-        <li><b>Then look at the dot and the bar.</b> The dot is the middle practice in your state; the bar is where the middle half of practices sit. If the bar reaches well past the dashed line, many practices like yours are paid more than the set rate.</li>
-        <li><b>Check <a href="#take-it">Take it or leave it</a></b> to see how many solo practices simply accepted the set rate, and what the ones above it are paid.</li>
+        <li><b>Look at the dashed line first.</b> That is Aetna's standard rate for your license: what a practice on the standard contract is paid, and what a new contract usually starts at.</li>
+        <li><b>Then look at the dot and the bar.</b> The dot is the median. The median is the middle value: half of practices are paid more, half are paid less. The bar shows where most practices are paid: in Florida, for 90837, most master's-level solo practices (the middle half) are paid between {money(fl_solo["p25"])} and {money(fl_solo["p75"])}. If the bar reaches well past the dashed line, many practices like yours are paid more than the standard rate.</li>
+        <li><b>Check <a href="#standard-rate">How often Aetna pays exactly its standard rate</a></b> for how many solo practices Aetna pays exactly that, and what it pays the rest.</li>
         <li><b>Use <a href="#table">the big table</a></b> at the bottom for other codes (45-minute sessions, intakes, family sessions).</li>
       </ol>
-      <p class="sub">These are rates Aetna has agreed to and published, by law, for its main national network. They can't tell you what your own contract says. If yours is below the set rate for your license, that is worth a question to Aetna's provider line.</p>
+      <p class="sub">These are rates Aetna has agreed to and published, by law, for its main national network. They can't tell you what your own contract says. If yours is below the standard rate for your license, that is worth a question to Aetna's provider line.</p>
     </section>
 
     <section id="ladder">
       <h2>One contract, three rates: which one is yours</h2>
-      <p>Every practice's rates come as a set of three, at exactly 75%, 85% and 100% of the top rate. Contracts in the same file that do label their rates show what the rungs are: master's level (LCSW, LPC / LMHC, LMFT) is paid 75%, nurse level 85%, physicians and psychologists 100%. It is the same split Medicare uses. Georgia and Florida share the same standard set.</p>
+      <p>Aetna lists three rates for each practice and pays the one that matches your license: master's level (LCSW, LPC / LMHC, LMFT), nurse practitioner, or doctoral (psychologist, psychiatrist). Georgia and Florida share the same standard rates.</p>
       <div class="ladder">
-        <div>Master's level<b>{money(FL["masters"])}</b>LCSW, LPC / LMHC, LMFT · 75%</div>
-        <div>Nurse practitioner<b>{money(FL["np"])}</b>85%</div>
-        <div>Doctoral<b>{money(FL["doctoral"])}</b>Psychologist, psychiatrist · 100%</div>
+        <div>Master's level<b>{money(FL["masters"])}</b>LCSW, LPC / LMHC, LMFT</div>
+        <div>Nurse practitioner<b>{money(FL["np"])}</b>Psychiatric NP</div>
+        <div>Doctoral<b>{money(FL["doctoral"])}</b>Psychologist, psychiatrist</div>
       </div>
-      <p class="sub">The standard set for 90837, the one the most Florida practices are on. Florida solo practices whose rates sit on a 75/85/100 set: {pct(cov_fl)}; Georgia: {pct(cov_ga)}. The rest (mostly older round-dollar schedules in Georgia) don't say which rate is which license and are left out below.</p>
+      <p class="sub">The standard rates for 90837, the ones the most Florida practices are on. How we worked out which rate goes with which license is in <a href="#method">How we figured this out</a>.</p>
     </section>
 
-    <section id="take-it">
-      <h2>Take it or leave it: how many solo practices are on the set rate?</h2>
-      <p>A solo practice paid exactly the standard rate for its license got the set rate, with nothing negotiated. In Florida that is {pct(fl_m["pct_on"])} of master's-level solo practices for 90837. In Georgia it is {pct(ga_m["pct_on"])}, and most are paid more. Florida's solo practices that aren't on the set rate are nearly all on one other set, at a median of {money(fl_m["median_above"])} for master's level.{" None is paid below the set rate." if none_below else ""}</p>
+    <section id="standard-rate">
+      <h2>How often Aetna pays solo practices exactly its standard rate</h2>
+      <p>In Florida, Aetna pays {pct(fl_m["pct_on"])} of master's-level solo practices exactly its standard rate for 90837. The rest are paid more, nearly all on one other rate (median {money(fl_m["median_above"])}).{" None is paid less." if none_below else ""} In Georgia, Aetna pays {pct(ga_m["pct_on"])} of them exactly the standard rate, and the rest more (median {money(ga_m["median_above"])}).</p>
       <div class="card">
-        <div class="legend"><span><i class="kon"></i>On the set rate</span><span><i class="kab"></i>Above it</span>{"" if none_below else '<span><i class="kbe"></i>Below it</span>'}</div>
+        <div class="legend"><span><i class="kon"></i>Exactly the standard rate</span><span><i class="kab"></i>Paid more</span>{"" if none_below else '<span><i class="kbe"></i>Paid less</span>'}</div>
         {takeit_chart()}
       </div>
       {takeit_table()}
@@ -500,30 +527,31 @@ page = f"""<!doctype html>
 
     <section id="by-license">
       <h2>What each license is paid: solo practices, 90837</h2>
-      <p>Each clinician's rate is the rung of their practice's set for their own license. Dashed line: the standard set rate for that license.</p>
+      <p>Each clinician is counted at their practice's rate for their own license. Dashed line: the standard rate for that license.</p>
       <div class="card">
-        <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>Florida</span><span><i class="kb"></i>Middle half</span><span><i class="kr"></i>Set rate</span></div>
+        <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>Florida</span><span><i class="kb"></i>Middle half</span><span><i class="kr"></i>Standard rate</span></div>
         {license_chart()}
       </div>
-      <p class="sub">The dot is the median; the thick bar is the middle half of practices; the thin line runs from the 10th to the 90th percentile. License groups with fewer than 11 solo practices are left out (Georgia has few nurse practitioners and psychiatrists in solo practice). Exact numbers are in <a href="#table">the table</a>.</p>
+      <p class="sub">The dot is the median; the bar is the middle half. License groups with fewer than 11 solo practices are left out (Georgia has few nurse practitioners and psychiatrists in solo practice). Exact numbers are in <a href="#table">the table</a>.</p>
     </section>
 
     <section id="platforms">
       <h2>What Aetna pays your platform for your license: Florida, 90837</h2>
-      <p>Headway, Alma, Rula and similar platforms hold one Aetna contract for all their clinicians, and the file lists what Aetna pays the platform for each session. You already know what your platform pays you for an Aetna 60-minute session, so you can put the two side by side. For a master's-level clinician, Aetna pays Headway {money(hw_lo)} or {money(hw_up)}, against {money(FL["masters"])} on a solo practice's standard contract.</p>
+      <p>Headway, Alma, Rula and similar platforms hold Aetna contracts for all their clinicians, and the file lists what Aetna pays the platform for each session. You already know what your platform pays you for an Aetna 60-minute session, so you can put the two side by side. For a master's-level clinician, Aetna pays Headway {money(hw_lo)} or {money(hw_up)}, against {money(FL["masters"])} on a solo practice's standard contract.</p>
       <div class="card">
         <div class="legend"><span><i class="k0"></i>Lower set, or the only one</span><span><i class="k1"></i>Upper set</span><span><i class="kr"></i>Solo standard rate</span></div>
         {platforms_chart()}
       </div>
       {platforms_table()}
-      <p class="sub">What Aetna pays the platform, not what the platform pays you: what a platform passes on to its clinicians is not in the file. Headway, Alma and Rula each list two rate sets for every clinician, and the file doesn't say which one a given session is paid under. Grow and Tava list one rate per license. Grow and Tava are matched by the name on their tax ID, so they are likely, not certain. Blank cells: the file has no clear rate for that license.</p>
+      <p class="sub">Headway contracts through two Florida tax IDs. Both list the same rates: two sets of three, one per license, and the file doesn't say which set a given session is paid under.</p>
+      <p class="sub">What Aetna pays the platform, not what the platform pays you: what a platform passes on to its clinicians is not in the file. Alma and Rula also list two rate sets for every clinician, again without saying which applies. Grow and Tava list one rate per license. Grow and Tava are matched by the name on their tax ID, so they are likely, not certain. Blank cells: the file has no clear rate for that license.</p>
     </section>
 
     <section id="by-code">
       <h2>Master's level, solo vs group, by billing code</h2>
-      <p class="sub">Dot is the median; the thick bar is the middle half of practices; the thin line runs from the 10th to the 90th percentile. Dashed line: the master's set rate for that code.</p>
+      <p class="sub">The dot is the median; the bar is the middle half. Dashed line: the master's-level standard rate for that code.</p>
       <div class="card">
-        <div class="legend"><span><i class="k0"></i>Solo practice</span><span><i class="k1"></i>Group practice</span><span><i class="kr"></i>Set rate</span></div>
+        <div class="legend"><span><i class="k0"></i>Solo practice</span><span><i class="k1"></i>Group practice</span><span><i class="kb"></i>Middle half</span><span><i class="kr"></i>Standard rate</span></div>
         <h3>Georgia</h3>
         {code_chart("GA")}
         <h3>Florida</h3>
@@ -532,8 +560,8 @@ page = f"""<!doctype html>
     </section>
 
     <section id="cohorts">
-      <h2>Are new contracts lower? Master's-level solo practices above the set rate, by NPI year</h2>
-      <p>Share of master's-level solo practices paid more than the set rate for 90837, grouped by when the clinician's NPI was issued (a rough stand-in for when they started practicing). The number in brackets is how many practices each bar rests on.</p>
+      <h2>Are new contracts lower? Master's-level solo practices paid more than the standard rate, by NPI year</h2>
+      <p>Share of master's-level solo practices Aetna pays more than its standard rate for 90837, grouped by when the clinician's NPI was issued (a rough stand-in for when they started practicing). The number in brackets is how many practices each bar rests on.</p>
       <div class="card">
         <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>Florida</span></div>
         {cohort_html}
@@ -541,38 +569,10 @@ page = f"""<!doctype html>
       <p class="sub">Georgia has very few master's-level solo practices with NPIs from 2020 on ({", ".join(cohort_dropped)}: fewer than 11 each), so those years are left out rather than shown on a handful of practices.</p>
     </section>
 
-    <section id="how">
-      <h2>How we figured this out</h2>
-      <p>Aetna publishes every rate it has agreed to in a huge public file. The first look made no sense: almost every practice had three different rates listed for the same session code, and the file gave no hint which one applied. An easy explanation was "plan tiers" or "office versus telehealth", and we nearly stopped there.</p>
-      <p>Kurt Niemi, who builds Pablo, kept pushing. Office versus non-office only gives two rates, not three, and the file showed the three prices were identical in every other way. So we looked at the numbers themselves. In every practice and every code, the three rates sat at exactly 75%, 85% and 100% of each other, to the cent.</p>
-      <p>That split is familiar: Medicare pays clinical social workers, marriage and family therapists and counselors 75% of the physician rate, and nurse practitioners 85%. Then we found contracts in the same Aetna file that do put the license code next to the rate (AJ/HO for social workers and master's-level clinicians, TD for nurse level, AF/AH for physicians and psychologists). Those labelled rates sit at the same 75%, 85% and 100%. Aetna's own provider newsletter calls 85% its "standard policy" for nurse practitioners, and an independent analysis of Aetna's data describes the same ladder.</p>
-      <p>So the three rates are a license ladder. Every practice's contract lists all three, and the one you are paid depends on your license. Once we read it that way, the numbers lined up, and they are what this page shows.</p>
-      <figure>
-        <img src="hachi-grilled.jpg" width="1200" height="800" loading="lazy" alt="Illustration: a small shiba plushie, Hachi, sits at a table in an interrogation room while a man points at spreadsheets of insurance rates. Caption: Kurt grilled his AI assistant, until the numbers made sense.">
-        <figcaption>Hachi is the AI assistant that ran the numbers. It took a few rounds.</figcaption>
-      </figure>
-    </section>
-
     <section id="table">
       <h2>Every license and code, solo and group</h2>
       <p class="sub">Rows with fewer than 11 practices are left out. Scroll sideways on a phone.</p>
       <div class="tall">{full_table()}</div>
-    </section>
-
-    <section id="method">
-      <details class="method">
-        <summary>How these numbers were made, and what they can't tell you</summary>
-        <ul>
-          <li>Source: Aetna Life Insurance Company's in-network rate file "pl-sk" (2026-11-05), used by 457 employer plans and covering Open Access Managed Choice and Choice POS II. Other Aetna files were not checked yet.</li>
-          <li>State and license come from the federal NPI registry (November 2026): practice-location state and primary taxonomy. Florida LMHCs are counted with LPCs.</li>
-          <li>The license rungs: most practices list three rates per code at 75%, 85% and 100% of the top one, without saying which is which. A few contracts in the same file label their rates with Aetna's license modifiers (AJ/HO master's level, TD nurse, AF/AH physician or psychologist), and those sit at exactly the same 75/85/100. Each clinician here gets the rung for their own license. Outside support: Aetna's own March 2022 provider update calls 85% of the physician rate its "standard policy for mid-level practitioners" (nurse practitioners, physician assistants, nurse midwives, clinical nurse specialists), and Serif Health's September 2026 analysis of Aetna's data describes the same "standard rate ladder": nurse practitioners at 85% and master's level at 75% of the PhD rate. No public Aetna document found states the 75% for master's level in its own words.</li>
-          <li>Set rate: the state's most common set for that code. "On the set rate" means paid exactly that rung, to the cent.</li>
-          <li>A few contracts (about 1%) also split each rate into office and non-office (facility, telehealth) prices. Only office or all-places prices are used here.</li>
-          <li>Solo means a tax ID with exactly one clinician anywhere in the file. Everything else is a group. Platforms: the rates are what Aetna pays the platform's tax ID (Florida, 90837, read with the same 75/85/100 rungs). What a platform passes on to its clinicians is not in the file.</li>
-          <li>Rates under $20 were dropped as placeholders. Some listed contracts are dormant: a clinician can be in the file and rarely bill Aetna.</li>
-          <li>Medians and ranges only. No individual clinician's rate is shown, and no row rests on fewer than 11 practices.</li>
-        </ul>
-      </details>
     </section>
 
     <section>
