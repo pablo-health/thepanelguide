@@ -4,7 +4,7 @@
     {
       "key": "Headway|lower",
       "platform": "Headway",
-      "clinicians": 13207,
+      "clinicians": 12130,
       "set": "lower",
       "masters": 93.28,
       "np": 105.71,
@@ -13,7 +13,7 @@
     {
       "key": "Headway|upper",
       "platform": "Headway",
-      "clinicians": 13207,
+      "clinicians": 12130,
       "set": "upper",
       "masters": 147.18,
       "np": 166.81,

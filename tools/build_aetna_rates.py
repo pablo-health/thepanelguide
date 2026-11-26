@@ -573,7 +573,7 @@ page = f"""<!doctype html>
         {platforms_chart()}
       </div>
       {platforms_table()}
-      <p class="sub">Headway contracts through two Florida tax IDs. Both list the same rates: two sets of three, one per license, and the file doesn't say which set a given session is paid under.</p>
+      <p class="sub">Headway contracts through nine tax IDs. All of them list the same rates: two sets of three, one per license, and the file doesn't say which set a given session is paid under.</p>
       <p class="sub">What Aetna pays the platform, not what the platform pays you: what a platform passes on to its clinicians is not in the file. Alma and Rula also list two rate sets for every clinician, again without saying which applies. Grow and Tava list one rate per license. Grow and Tava are matched by the name on their tax ID, so they are likely, not certain. Blank cells: the file has no clear rate for that license.</p>
     </section>
 
