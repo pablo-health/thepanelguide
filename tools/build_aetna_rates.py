@@ -92,6 +92,31 @@ def e(s: object) -> str:
     return escape(str(s))
 
 
+SOURCE_FILES = [
+    ("Aetna's public rate files page (no login)",
+     "https://health1.aetna.com/app/public/#/one/insurerCode=AETNACVS_I&brandCode=ALICSI/machine-readable-transparency-in-coverage"),
+    ('The exact file: Aetna Life Insurance Company in-network rates "pl-sk", Nov 5, 2026 '
+     "(1.6 GB compressed, about 22 GB unpacked; JSON)",
+     "https://mrf.healthsparq.com/aetnacvs-egress.nophi.kyruushsq.com/prd/mrf/AETNACVS_I/ALICSI/2026-11-05/"
+     "inNetworkRates/2026-11-05_pl-sk-tr25_Aetna-Life-Insurance-Company.json.gz"),
+    ("Aetna's index of all its files",
+     "https://mrf.healthsparq.com/aetnacvs-egress.nophi.kyruushsq.com/prd/mrf/AETNACVS_I/ALICSI/latest_metadata.json"),
+    ("The federal NPI registry download, for state and license (November 2026 file)",
+     "https://download.cms.gov/nppes/NPI_Files.html"),
+    ("The federal file format", "https://github.com/CMSgov/price-transparency-guide"),
+]
+
+
+def files_list() -> str:
+    """The method card's source links, then this site's own aggregate JSON."""
+    def link(label: str, href: str) -> str:
+        return f'<a href="{e(href)}" target="_blank" rel="noopener">{e(label)}</a>'
+    items = [f"          <li>{link(label, href)}</li>" for label, href in SOURCE_FILES]
+    ours = ", ".join(link(f.name, f"../data/aetna-2026-11/{f.name}") for f in sorted(DATA.glob("*.json")))
+    items.append(f"          <li>Our numbers behind this page: {ours}</li>")
+    return "\n".join(items)
+
+
 rates = keep(load("rates"))
 standard = keep(load("standard"))
 coverage = keep(load("coverage"))
@@ -486,6 +511,11 @@ page = f"""<!doctype html>
           <li>Rates under $20 were dropped as placeholders. Some listed contracts are dormant: a clinician can be in the file and rarely bill Aetna.</li>
           <li>Medians and ranges only. No individual clinician's rate is shown, and no row rests on fewer than 11 practices.</li>
         </ul>
+        <h3>The files we used</h3>
+        <ul class="files">
+{files_list()}
+        </ul>
+        <p>Aetna publishes new files every month, so this link may stop working once the file is replaced.</p>
       </details>
       <p class="lede">Aetna pays by license. For a 60-minute session (90837) its standard rate is <b>{money(FL["masters"])}</b> for master's-level clinicians, <b>{money(FL["np"])}</b> for nurse practitioners and <b>{money(FL["doctoral"])}</b> for psychologists and psychiatrists.</p>
       <p class="sub">Negotiated rates Aetna lists, not what anyone collected.</p>
@@ -497,7 +527,7 @@ page = f"""<!doctype html>
       <ol class="steps">
         <li><b>Find your license</b> in <a href="#by-license">What each license is paid</a> (LCSW, LPC / LMHC, LMFT, nurse practitioner, psychologist, psychiatrist).</li>
         <li><b>Look at the dashed line first.</b> That is Aetna's standard rate for your license: what a practice on the standard contract is paid, and what a new contract usually starts at.</li>
-        <li><b>Then look at the dot and the bar.</b> The dot is the median. The median is the middle value: half of practices are paid more, half are paid less. The bar shows where most practices are paid: in Florida, for 90837, most master's-level solo practices (the middle half) are paid between {money(fl_solo["p25"])} and {money(fl_solo["p75"])}. If the bar reaches well past the dashed line, many practices like yours are paid more than the standard rate.</li>
+        <li><b>Then look at the dot and the bar.</b> The dot is the median. The median is the rate in the middle when practices are lined up from lowest to highest. Many practices are paid exactly the same rate, so the median is often the standard rate itself. The bar shows where most practices are paid: in Florida, for 90837, most master's-level solo practices (the middle half) are paid between {money(fl_solo["p25"])} and {money(fl_solo["p75"])}. If the bar reaches well past the dashed line, many practices like yours are paid more than the standard rate.</li>
         <li><b>Check <a href="#standard-rate">How often Aetna pays exactly its standard rate</a></b> for how many solo practices Aetna pays exactly that, and what it pays the rest.</li>
         <li><b>Use <a href="#table">the big table</a></b> at the bottom for other codes (45-minute sessions, intakes, family sessions).</li>
       </ol>
