@@ -59,7 +59,13 @@ LIC_LABEL = {
     "nurse practitioner": "Nurse practitioner (all)",
     "doctoral": "Doctoral (all)",
 }
-STATE = {"GA": "Georgia", "FL": "Florida"}
+STATE = {"GA": "Georgia", "FL": "Florida", "FL-North": "Florida, north and central",
+         "FL-South": "Florida, south and Tampa Bay"}
+SHORT = {"GA": "GA", "FL": "FL", "FL-North": "FL north", "FL-South": "FL south"}
+# Florida is shown by region: Aetna pays Florida independents on two regional standard sets
+# (practice-location ZIP from the NPI registry). Statewide FL rows stay in the JSON, unshown.
+REGIONS = ["GA", "FL-North", "FL-South"]
+FL_REGIONS = ["FL-North", "FL-South"]
 SET_LABEL = {"lower": "Lower set", "upper": "Upper set", "one": "One set"}
 
 
@@ -125,8 +131,12 @@ cohorts_all = load("cohorts")
 cohorts = keep(cohorts_all)
 platforms = load("platforms")
 
-FL = ladder["FL|90837"]
-assert ladder["GA|90837"]["masters"] == FL["masters"], "GA and FL standard sets differ; copy says they match"
+FLN = ladder["FL-North|90837"]
+FLS = ladder["FL-South|90837"]
+for k in ("masters", "np", "doctoral"):
+    assert ladder["GA|90837"][k] == FLS[k], "GA and south Florida standard sets differ; copy says they match"
+assert FLN["masters"] > FLS["masters"], "copy says north and central Florida's standard is the higher one"
+STD = {st: ladder[f"{st}|90837"] for st in REGIONS}
 
 
 def row(rows: list[dict], key: str) -> dict:
@@ -157,9 +167,9 @@ def axis(d: tuple[float, float], fmt=lambda t: f"${t}") -> str:
     return f'<div class="rrow axisrow"><div></div><div class="raxis">{marks}</div></div>', grid
 
 
-def range_chart(label: str, groups: list[tuple[str, list[tuple[int, dict | None, str]], float | None]],
+def range_chart(label: str, groups: list[tuple[str, list[tuple[int, dict | None, str]], list[float]]],
                 d: tuple[float, float]) -> str:
-    """groups: (group label, [(series index, row, tooltip title)], reference value)."""
+    """groups: (group label, [(series index, row, tooltip title)], reference values)."""
     ax, grid = axis(d)
     out = [f'<div class="rchart" role="img" aria-label="{e(label)}">']
     for glabel, series, ref in groups:
@@ -176,7 +186,7 @@ def range_chart(label: str, groups: list[tuple[str, list[tuple[int, dict | None,
                 f'<i class="bx" style="left:{b_l};width:{b_r}"></i>'
                 f'<i class="dt" style="left:{x(r["median"], d)}"></i></div>'
             )
-        refl = f'<i class="ref" style="left:{x(ref, d)}"></i>' if ref is not None else ""
+        refl = "".join(f'<i class="ref" style="left:{x(v, d)}"></i>' for v in sorted(set(ref)))
         out.append(f'<div class="rrow"><div class="rlab">{e(glabel)}</div>'
                    f'<div class="rtrack">{grid}{refl}{"".join(lines)}</div></div>')
     out.append(ax)
@@ -186,22 +196,23 @@ def range_chart(label: str, groups: list[tuple[str, list[tuple[int, dict | None,
 
 def license_chart() -> str:
     rows = [r for r in rates if r["code"] == "90837" and r["practice"] == "solo" and r["license"] in LICENSES]
-    refs = [FL[RUNG_OF[l]] for l in LICENSES]
+    refs = [STD[st][RUNG_OF[l]] for st in REGIONS for l in LICENSES]
     d = domain(min([r["p25"] for r in rows] + refs), max([r["p75"] for r in rows] + refs))
     groups = []
     for l in LICENSES:
         series = []
-        for si, st in enumerate(["GA", "FL"]):
+        for si, st in enumerate(REGIONS):
             r = next((q for q in rows if q["license"] == l and q["state"] == st), None)
             series.append((si, r, f"{STATE[st]}, {lic(l)}, solo, 90837"))
         if any(s[1] for s in series):
-            groups.append((lic(l), series, FL[RUNG_OF[l]]))
-    return range_chart("Solo practice 90837 rates by license, Georgia and Florida", groups, d)
+            groups.append((lic(l), series, [STD[st][RUNG_OF[l]] for st in REGIONS]))
+    return range_chart("Solo practice 90837 rates by license: Georgia, north and central Florida, "
+                       "south Florida and Tampa Bay", groups, d)
 
 
 def code_chart(st: str) -> str:
     allm = [r for r in rates if r["license"] == "master's"]
-    refs = [ladder[f"{s}|{c}"]["masters"] for s in STATE for c in CODES]
+    refs = [ladder[f"{s}|{c}"]["masters"] for s in REGIONS for c in CODES]
     d = domain(min([r["p25"] for r in allm] + refs), max([r["p75"] for r in allm] + refs))
     groups = []
     for c in CODES:
@@ -209,14 +220,14 @@ def code_chart(st: str) -> str:
         for si, p in enumerate(["solo", "group"]):
             r = next((q for q in allm if q["state"] == st and q["code"] == c and q["practice"] == p), None)
             series.append((si, r, f"{STATE[st]}, {CODE_LABEL[c]}, master's level, {p}"))
-        groups.append((CODE_LABEL[c], series, ladder[f"{st}|{c}"]["masters"]))
+        groups.append((CODE_LABEL[c], series, [ladder[f"{st}|{c}"]["masters"]]))
     return range_chart(f"{STATE[st]}: master's-level solo and group rate ranges for five therapy codes", groups, d)
 
 
 def takeit_chart() -> str:
-    out = ['<div class="stack" role="img" aria-label="How often Aetna pays solo practices exactly its standard 90837 rate, more, or less, by license level, Georgia and Florida">']
+    out = ['<div class="stack" role="img" aria-label="How often Aetna pays solo practices exactly its standard 90837 rate, more, or less, by license level: Georgia, north and central Florida, south Florida and Tampa Bay">']
     for g in ["master's", "nurse practitioner", "doctoral"]:
-        for st in ["GA", "FL"]:
+        for st in REGIONS:
             r = next((q for q in standard if q["license"] == g and q["state"] == st and q["code"] == "90837"), None)
             if r is None:
                 continue
@@ -231,7 +242,7 @@ def takeit_chart() -> str:
                 if val > 0:
                     txt = pct(val) if val >= 9 else ""
                     segs += f'<i class="{cls}" style="width:{val:.2f}%">{txt}</i>'
-            out.append(f'<div class="srow" title="{e(tip)}"><div class="rlab">{e(lic(g).replace(" (all)", ""))} · {st}'
+            out.append(f'<div class="srow" title="{e(tip)}"><div class="rlab">{e(lic(g).replace(" (all)", ""))} · {SHORT[st]}'
                        f'<small>{r["practices"]:,} practices</small></div><div class="sbar">{segs}</div></div>')
     out.append("</div>")
     return "\n".join(out)
@@ -239,23 +250,22 @@ def takeit_chart() -> str:
 
 def platforms_chart() -> str:
     rows = [r for r in platforms if r["masters"] is not None]
-    solo = FL["masters"]
-    vals = [r["masters"] for r in rows] + [solo]
+    vals = [r["masters"] for r in rows]
     d = (math.floor((min(vals) - 10) / 10) * 10, math.ceil((max(vals) + 10) / 10) * 10)
     ax, grid = axis(d)
-    out = ['<div class="rchart" role="img" aria-label="What Aetna pays each platform for a master\'s-level 90837 in Florida, against the solo standard rate">']
+    out = ['<div class="rchart" role="img" aria-label="What Aetna pays each platform for a master\'s-level 90837 in Florida">']
     names = list(dict.fromkeys(r["platform"] for r in rows))
     for n in names:
         rs = [r for r in rows if r["platform"] == n]
         tip = f"{n}, master's level, 90837: " + "; ".join(f"{SET_LABEL[r['set']]} {money(r['masters'])}" for r in rs) \
-            + f"; solo standard {money(solo)}; {rs[0]['clinicians']:,} Florida clinicians"
+            + f"; {rs[0]['clinicians']:,} Florida clinicians"
         link = ""
         if len(rs) > 1:
             lo, hi = min(r["masters"] for r in rs), max(r["masters"] for r in rs)
             link = f'<i class="pl" style="left:{x(lo, d)};width:{100 * (hi - lo) / (d[1] - d[0]):.2f}%"></i>'
         dots = "".join(f'<i class="pd {"c1" if r["set"] == "upper" else "c0"}" style="left:{x(r["masters"], d)}"></i>' for r in rs)
         out.append(f'<div class="rrow" title="{e(tip)}"><div class="rlab">{e(n)}</div>'
-                   f'<div class="rtrack">{grid}<i class="ref" style="left:{x(solo, d)}"></i>'
+                   f'<div class="rtrack">{grid}'
                    f'<div class="rs prow">{link}{dots}</div></div></div>')
     out.append(ax)
     out.append("</div>")
@@ -266,18 +276,18 @@ def cohort_chart() -> tuple[str, list[str]]:
     order = sorted({(r["cohort_order"], r["cohort"]) for r in cohorts_all})
     dropped = sorted({r["cohort"] for r in cohorts_all if r["practices"] < MIN_PRACTICES and r["state"] == "GA"},
                      key=lambda c: next(o for o, n in order if n == c))
-    out = ['<div class="cchart" role="img" aria-label="Share of master\'s-level solo practices Aetna pays more than its standard 90837 rate, by NPI year, Georgia and Florida">']
+    out = ['<div class="cchart" role="img" aria-label="Share of master\'s-level solo practices Aetna pays more than its standard 90837 rate, by NPI year: Georgia, north and central Florida, south Florida and Tampa Bay">']
     for _, c in order:
         bars = ""
-        for si, st in enumerate(["GA", "FL"]):
+        for si, st in enumerate(REGIONS):
             r = next((q for q in cohorts if q["cohort"] == c and q["state"] == st and q["practice"] == "solo"), None)
             if r is None:
-                bars += f'<div class="cb"><span class="na">{st}: too few practices to show</span></div>'
+                bars += f'<div class="cb"><span class="na">{SHORT[st]}: too few practices to show</span></div>'
                 continue
             tip = (f"{STATE[st]}, NPI {c}: {pct(r['pct_above'])} paid more than the standard rate; exactly it {r['on_standard']}, "
                    f"less {r['below_standard']}; median {money(r['median'])}; {r['practices']:,} master's-level solo practices")
             bars += (f'<div class="cb" title="{e(tip)}"><i class="c{si}" style="width:{r["pct_above"]:.1f}%"></i>'
-                     f'<span>{st} {pct(r["pct_above"])} <small>({r["practices"]:,})</small></span></div>')
+                     f'<span>{SHORT[st]} {pct(r["pct_above"])} <small>({r["practices"]:,})</small></span></div>')
         out.append(f'<div class="crow"><div class="rlab">{e(c)}</div><div>{bars}</div></div>')
     out.append("</div>")
     return "\n".join(out), dropped
@@ -294,11 +304,11 @@ def table(head: list[str], body: list[list[str]], left: int) -> str:
 
 def takeit_table() -> str:
     order = ["master's", *LICENSES[:5], "nurse practitioner", "Psych NP/CNS", "doctoral", "Psychologist", "Psychiatrist"]
-    rows = sorted((r for r in standard if r["code"] == "90837"),
-                  key=lambda r: (0 if r["state"] == "GA" else 1, order.index(r["license"])))
+    rows = sorted((r for r in standard if r["code"] == "90837" and r["state"] in REGIONS),
+                  key=lambda r: (REGIONS.index(r["state"]), order.index(r["license"])))
     body = [[STATE[r["state"]], lic(r["license"]), money(r["standard"]), f"{r['practices']:,}", pct(r["pct_on"]),
              pct(r["pct_above"]), money(r["median_above"]), pct(100 * r["below"] / r["practices"])] for r in rows]
-    return table(["State", "License", "Standard rate", "Solo practices", "Paid exactly it", "Paid more",
+    return table(["Where", "License", "Standard rate", "Solo practices", "Paid exactly it", "Paid more",
                   "Median if paid more", "Paid less"], body, 2)
 
 
@@ -309,25 +319,25 @@ def platforms_table() -> str:
 
 
 def full_table() -> str:
-    rows = [r for r in rates if r["license"] in LICENSES]
-    rows.sort(key=lambda r: (0 if r["state"] == "GA" else 1, LICENSES.index(r["license"]), CODES.index(r["code"]),
+    rows = [r for r in rates if r["license"] in LICENSES and r["state"] in REGIONS]
+    rows.sort(key=lambda r: (REGIONS.index(r["state"]), LICENSES.index(r["license"]), CODES.index(r["code"]),
                              0 if r["practice"] == "solo" else 1))
     body = [[STATE[r["state"]], lic(r["license"]), CODE_LABEL[r["code"]], r["practice"], f"{r['practices']:,}",
              money(r["low"]), money(r["p25"]), money(r["median"]), money(r["p75"]), money(r["high"])] for r in rows]
-    return table(["State", "License", "Code", "Practice", "Practices", "Low", "Middle half from", "Median",
+    return table(["Where", "License", "Code", "Practice", "Practices", "Low", "Middle half from", "Median",
                   "Middle half to", "High"], body, 4)
 
 
 # ---------------------------------------------------------------- page
 
-fl_m = row(standard, "FL|master's|90837")
+fln_m = row(standard, "FL-North|master's|90837")
+fls_m = row(standard, "FL-South|master's|90837")
 ga_m = row(standard, "GA|master's|90837")
-none_below = all(r["below"] == 0 for r in standard)
+none_below = all(r["below"] == 0 for r in standard if r["state"] in REGIONS)
 cov_fl = row(coverage, "FL|solo|90837")["pct_mapped"]
 cov_ga = row(coverage, "GA|solo|90837")["pct_mapped"]
 hw_lo = row(platforms, "Headway|lower")["masters"]
 hw_up = row(platforms, "Headway|upper")["masters"]
-fl_solo = row(rates, "FL|solo|master's|90837")
 cohort_html, cohort_dropped = cohort_chart()
 
 TITLE = "What Aetna pays therapists, by license and billing code"
@@ -356,7 +366,7 @@ page = f"""<!doctype html>
     --green:#2f5d48; --green-soft:#dfe8df; --rust:#a4532c; --rule:#d6cbb5; --amber:#c98b2b;
     --serif: "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
     --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    --c0:var(--green); --c1:var(--rust);
+    --c0:var(--green); --c1:var(--rust); --c2:#3b6787;
   }}
   html,body{{background:var(--paper);margin:0}}
   .site{{background:var(--paper);color:var(--ink);font-family:var(--serif);line-height:1.55;font-size:17px}}
@@ -394,10 +404,13 @@ page = f"""<!doctype html>
   .ladder{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0 16px}}
   .ladder div{{background:var(--paper-2);border-radius:10px;padding:14px 16px;font:14px/1.4 var(--sans);color:var(--ink-2)}}
   .ladder b{{display:block;font:600 34px/1.1 var(--serif);color:var(--ink);margin:4px 0}}
+  .ladder-h{{font:600 14px var(--sans);margin:14px 0 0;color:var(--ink)}}
+  .region{{background:var(--paper-2);border-radius:10px;padding:12px 16px;font:14.5px/1.5 var(--sans);color:var(--ink-2)}}
+  .region b{{color:var(--ink)}}
   .card{{background:#fbf8f1;border:1px solid var(--rule);border-radius:12px;padding:16px 18px 10px;margin:10px 0 14px}}
   .legend{{display:flex;flex-wrap:wrap;gap:6px 16px;font:13px var(--sans);color:var(--ink-2);margin:4px 0 8px}}
   .legend i{{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}}
-  .legend .k0{{background:var(--c0)}} .legend .k1{{background:var(--c1)}}
+  .legend .k0{{background:var(--c0)}} .legend .k1{{background:var(--c1)}} .legend .k2{{background:var(--c2)}}
   .legend .kon{{background:var(--green);border-radius:2px}} .legend .kab{{background:var(--amber);border-radius:2px}} .legend .kbe{{background:var(--ink-2);border-radius:2px}}
   .legend .kr{{width:16px;height:0;border-top:2px dashed var(--ink);border-radius:0;vertical-align:3px}}
   .legend .kb{{width:22px;height:8px;border-radius:4px;background:var(--ink-2);opacity:.35}}
@@ -413,7 +426,7 @@ page = f"""<!doctype html>
   .rs i{{position:absolute;top:50%}}
   .rs .bx{{height:10px;margin-top:-5px;border-radius:5px;background:var(--c);opacity:.35}}
   .rs .dt{{width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--c);border:2px solid #fbf8f1;box-sizing:border-box;z-index:2}}
-  .rs.c0{{--c:var(--c0)}} .rs.c1{{--c:var(--c1)}}
+  .rs.c0{{--c:var(--c0)}} .rs.c1{{--c:var(--c1)}} .rs.c2{{--c:var(--c2)}}
   .prow{{height:22px}}
   .prow .pl{{height:2px;margin-top:-1px;background:var(--ink-2);opacity:.45}}
   .prow .pd{{width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid #fbf8f1;box-sizing:border-box;z-index:2}}
@@ -432,7 +445,7 @@ page = f"""<!doctype html>
   .crow{{display:grid;grid-template-columns:6em 1fr;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--rule)}}
   .cb{{position:relative;height:20px;margin:3px 0;background:#ece4d3;border-radius:3px}}
   .cb i{{position:absolute;left:0;top:0;bottom:0;border-radius:3px}}
-  .cb i.c0{{background:var(--c0)}} .cb i.c1{{background:var(--c1)}}
+  .cb i.c0{{background:var(--c0)}} .cb i.c1{{background:var(--c1)}} .cb i.c2{{background:var(--c2)}}
   .cb span{{position:absolute;left:8px;top:0;line-height:20px;color:#fff;font-weight:600;text-shadow:0 0 2px rgba(0,0,0,.35)}}
   .cb span small{{font-weight:400}}
   .cb span.na{{color:var(--ink-2);font-weight:400;text-shadow:none}}
@@ -502,9 +515,10 @@ page = f"""<!doctype html>
         <ul>
           <li>Source: Aetna Life Insurance Company's in-network rate file "pl-sk" (2026-11-05), used by 457 employer plans and covering Open Access Managed Choice and Choice POS II. Other Aetna files were not checked yet.</li>
           <li>State and license come from the federal NPI registry (November 2026): practice-location state and primary taxonomy. Florida LMHCs are counted with LPCs.</li>
+          <li>Region: practice-location ZIP from the NPI registry; a group counts in the region where most of its clinicians practice.</li>
           <li>The license rates: most practices list three rates per code at 75%, 85% and 100% of the top one, without saying which is which. A few contracts in the same file label their rates with Aetna's license modifiers (AJ/HO master's level, TD nurse, AF/AH physician or psychologist), and those sit at exactly the same 75/85/100. Each clinician here gets the rate for their own license. Outside support: Aetna's own March 2022 provider update calls 85% of the physician rate its "standard policy for mid-level practitioners" (nurse practitioners, physician assistants, nurse midwives, clinical nurse specialists), and Serif Health's September 2026 analysis of Aetna's data describes the same "standard rate ladder": nurse practitioners at 85% and master's level at 75% of the PhD rate. No public Aetna document found states the 75% for master's level in its own words.</li>
           <li>Florida solo practices whose rates follow the 75/85/100 pattern: {pct(cov_fl)}; Georgia: {pct(cov_ga)}. The rest (mostly older round-dollar schedules in Georgia) don't say which rate is which license and are left out.</li>
-          <li>Standard rate: the state's most common rate for that license and code. "Exactly the standard rate" means paid that rate, to the cent.</li>
+          <li>Standard rate: the most common rate for that license and code in the state (in Florida, in the region). "Exactly the standard rate" means paid that rate, to the cent.</li>
           <li>Low and high: the lowest and highest rate at least 11 practices are paid (or the 10% and 90% marks if those are further out), so no single practice's rate is shown.</li>
           <li>A few contracts (about 1%) also split each rate into office and non-office (facility, telehealth) prices. Only office or all-places prices are used here.</li>
           <li>Solo means a tax ID with exactly one clinician anywhere in the file. Everything else is a group. Platforms: the rates are what Aetna pays the platform's tax ID (Florida, 90837, read with the same 75/85/100 pattern). What a platform passes on to its clinicians is not in the file.</li>
@@ -517,7 +531,7 @@ page = f"""<!doctype html>
         </ul>
         <p>Aetna publishes new files every month, so this link may stop working once the file is replaced.</p>
       </details>
-      <p class="lede">Aetna pays by license. For a 60-minute session (90837) its standard rate is <b>{money(FL["masters"])}</b> for master's-level clinicians, <b>{money(FL["np"])}</b> for nurse practitioners and <b>{money(FL["doctoral"])}</b> for psychologists and psychiatrists.</p>
+      <p class="lede">Aetna pays by license, and in Florida by region. For a 60-minute session (90837) its standard rate for master's-level clinicians is <b>{money(FLN["masters"])}</b> in north and central Florida and <b>{money(FLS["masters"])}</b> in south Florida and Tampa Bay, the same as in Georgia. Nurse practitioners: {money(FLN["np"])} and {money(FLS["np"])}. Psychologists and psychiatrists: {money(FLN["doctoral"])} and {money(FLS["doctoral"])}.</p>
       <p class="sub">Negotiated rates Aetna lists, not what anyone collected.</p>
       <div class="ask"><b>Want this for your state, your license or another insurer?</b>Email <a href="{ASK}">rates@pablo.health</a> and we'll run it.</div>
     </div>
@@ -526,8 +540,8 @@ page = f"""<!doctype html>
       <h2>Start here: what does Aetna pay someone like you?</h2>
       <ol class="steps">
         <li><b>Find your license</b> in <a href="#by-license">What each license is paid</a> (LCSW, LPC / LMHC, LMFT, nurse practitioner, psychologist, psychiatrist).</li>
-        <li><b>Look at the dashed line first.</b> That is Aetna's standard rate for your license: what a practice on the standard contract is paid, and what a new contract usually starts at.</li>
-        <li><b>Then look at the dot and the bar.</b> The dot is the median. The median is the rate in the middle when practices are lined up from lowest to highest. Many practices are paid exactly the same rate, so the median is often the standard rate itself. The bar shows where most practices are paid: in Florida, for 90837, most master's-level solo practices (the middle half) are paid between {money(fl_solo["p25"])} and {money(fl_solo["p75"])}. If the bar reaches well past the dashed line, many practices like yours are paid more than the standard rate.</li>
+        <li><b>Look at the dashed line first.</b> That is Aetna's standard rate for your license: what a practice on the standard contract is paid, and what a new contract usually starts at. Florida has two, one for each region (see <a href="#region">which Florida region you are in</a>).</li>
+        <li><b>Then look at the dot and the bar.</b> The dot is the median. The median is the rate in the middle when practices are lined up from lowest to highest. Many practices are paid exactly the same rate, so the median is often the standard rate itself. The bar shows where most practices are paid (the middle half). In Florida most solo practices are paid exactly their region's standard rate, so there the bar is often a thin mark on the dashed line. If the bar reaches well past the dashed line, many practices like yours are paid more than the standard rate.</li>
         <li><b>Check <a href="#standard-rate">How often Aetna pays exactly its standard rate</a></b> for how many solo practices Aetna pays exactly that, and what it pays the rest.</li>
         <li><b>Use <a href="#table">the big table</a></b> at the bottom for other codes (45-minute sessions, intakes, family sessions).</li>
       </ol>
@@ -536,30 +550,41 @@ page = f"""<!doctype html>
 
     <section id="ladder">
       <h2>One contract, three rates: which one is yours</h2>
-      <p>Aetna lists three rates for each practice and pays the one that matches your license: master's level (LCSW, LPC / LMHC, LMFT), nurse practitioner, or doctoral (psychologist, psychiatrist). Georgia and Florida share the same standard rates.</p>
+      <p>Aetna lists three rates for each practice and pays the one that matches your license: master's level (LCSW, LPC / LMHC, LMFT), nurse practitioner, or doctoral (psychologist, psychiatrist). Florida has two standard sets, one for each region. South Florida and Tampa Bay share Georgia's.</p>
+      <p class="ladder-h">North and central Florida</p>
       <div class="ladder">
-        <div>Master's level<b>{money(FL["masters"])}</b>LCSW, LPC / LMHC, LMFT</div>
-        <div>Nurse practitioner<b>{money(FL["np"])}</b>Psychiatric NP</div>
-        <div>Doctoral<b>{money(FL["doctoral"])}</b>Psychologist, psychiatrist</div>
+        <div>Master's level<b>{money(FLN["masters"])}</b>LCSW, LPC / LMHC, LMFT</div>
+        <div>Nurse practitioner<b>{money(FLN["np"])}</b>Psychiatric NP</div>
+        <div>Doctoral<b>{money(FLN["doctoral"])}</b>Psychologist, psychiatrist</div>
       </div>
-      <p class="sub">The standard rates for 90837, the ones the most Florida practices are on. How we worked out which rate goes with which license is in <a href="#method">How we figured this out</a>.</p>
+      <p class="ladder-h">South Florida and Tampa Bay, and Georgia</p>
+      <div class="ladder">
+        <div>Master's level<b>{money(FLS["masters"])}</b>LCSW, LPC / LMHC, LMFT</div>
+        <div>Nurse practitioner<b>{money(FLS["np"])}</b>Psychiatric NP</div>
+        <div>Doctoral<b>{money(FLS["doctoral"])}</b>Psychologist, psychiatrist</div>
+      </div>
+      <p class="region" id="region"><b>Which Florida region are you in?</b> It goes by where you practice. North and central Florida is ZIP codes starting 320 to 329, 344 and 347: Jacksonville, St Augustine, Daytona, Tallahassee, the Panhandle and Pensacola, Gainesville, Orlando and Winter Park, Kissimmee, Ocala, the Space Coast and Vero. Everywhere else is south Florida and Tampa Bay: Miami-Dade, Broward, Palm Beach, Tampa, St Petersburg, Sarasota, Fort Myers, Naples, Lakeland and Port St Lucie. Practices on the two sides have the same mix of licenses and contracts of the same ages; the difference is location. A group counts in the region where most of its clinicians practice.</p>
+      <p class="sub">The standard rates for 90837, the ones most practices in each region are on. How we worked out which rate goes with which license is in <a href="#method">How we figured this out</a>.</p>
     </section>
 
     <section id="standard-rate">
       <h2>How often Aetna pays solo practices exactly its standard rate</h2>
-      <p>In Florida, Aetna pays {pct(fl_m["pct_on"])} of master's-level solo practices exactly its standard rate for 90837. Most of the rest are paid more, nearly all on one other rate (median {money(fl_m["median_above"])}){"; none is paid less." if none_below else f'; {fl_m["below"]} of {fl_m["practices"]:,} are paid less.'} In Georgia, Aetna pays {pct(ga_m["pct_on"])} of them exactly the standard rate; {ga_m["above"]} of {ga_m["practices"]:,} are paid more (median {money(ga_m["median_above"])}) and {ga_m["below"]} less.</p>
+      <p>In north and central Florida, Aetna pays {pct(fln_m["pct_on"])} of master's-level solo practices exactly its standard rate for 90837, {money(fln_m["standard"])}; {fln_m["above"]} of {fln_m["practices"]:,} are paid more and {fln_m["below"]} less. In south Florida and Tampa Bay it pays {pct(fls_m["pct_on"])} exactly {money(fls_m["standard"])}; {fls_m["above"]} of {fls_m["practices"]:,} are paid more and {fls_m["below"]} less. In Georgia, Aetna pays {pct(ga_m["pct_on"])} of them exactly the standard rate; {ga_m["above"]} of {ga_m["practices"]:,} are paid more (median {money(ga_m["median_above"])}) and {ga_m["below"]} less.</p>
       <div class="card">
         <div class="legend"><span><i class="kon"></i>Exactly the standard rate</span><span><i class="kab"></i>Paid more</span>{"" if none_below else '<span><i class="kbe"></i>Paid less</span>'}</div>
         {takeit_chart()}
       </div>
       {takeit_table()}
+      <p>Some Florida contracts pay less. A separate Aetna fee schedule pays master's-level clinicians $60 for a 45-minute session and the same $60 for a 60-minute one ($70 for psychologists). It is the same schedule in every employer plan in this file, not one plan's. It belongs mostly to agencies and group practices, and to long-established independent practices: all but five of the 55 got their NPI in 2005-07, when NPIs were first issued, and only one is newer than 2013. Clinicians who joined those agencies recently are on it too, but almost no independent practice that started recently is.</p>
+      <p>Organizations on it with 11 or more Florida clinicians include Aspire Health Partners (Orlando, 166 clinicians), Henderson Behavioral Health (Broward, 147), Alpha Therapy (Arcadia and Bradenton, 74), Cove Behavioral Health (Tampa, 55), Park Place Behavioral Health Care (Kissimmee, 28), Samaritan Counseling Services of the Gulf Coast (Sarasota, 17), Weston Psychological Associates (16), Child and Family Psychologists (Plantation, 16), Presbyterian Counseling Center (Daytona Beach, 14), Adapt Behavioral Services (Maitland, 13) and Guidance Clinic of the Middle Keys (Key West, 12). Aspire and Park Place are in north and central Florida, where the standard rate for independents is {money(FLN["masters"])}.</p>
+      <p>If you are independent and were offered $60, ask Aetna which fee schedule and which plans the offer covers, and what the standard rate is for your region.</p>
     </section>
 
     <section id="by-license">
       <h2>What each license is paid: solo practices, 90837</h2>
-      <p>Each clinician is counted at their practice's rate for their own license. Dashed line: the standard rate for that license.</p>
+      <p>Each clinician is counted at their practice's rate for their own license. Dashed lines: the standard rates for that license. The higher one is north and central Florida's; south Florida, Tampa Bay and Georgia share the lower one.</p>
       <div class="card">
-        <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>Florida</span><span><i class="kb"></i>Middle half</span><span><i class="kr"></i>Standard rate</span></div>
+        <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>FL north and central</span><span><i class="k2"></i>FL south and Tampa Bay</span><span><i class="kb"></i>Middle half</span><span><i class="kr"></i>Standard rates</span></div>
         {license_chart()}
       </div>
       <p class="sub">The dot is the median; the bar is the middle half. License groups with fewer than 11 solo practices are left out (Georgia has few nurse practitioners and psychiatrists in solo practice). Exact numbers are in <a href="#table">the table</a>.</p>
@@ -567,9 +592,9 @@ page = f"""<!doctype html>
 
     <section id="platforms">
       <h2>What Aetna pays your platform for your license: Florida, 90837</h2>
-      <p>Headway, Alma, Rula and similar platforms hold Aetna contracts for all their clinicians, and the file lists what Aetna pays the platform for each session. You already know what your platform pays you for an Aetna 60-minute session, so you can put the two side by side. For a master's-level clinician, Aetna pays Headway {money(hw_lo)} or {money(hw_up)}, against {money(FL["masters"])} on a solo practice's standard contract.</p>
+      <p>Headway, Alma, Rula and similar platforms hold Aetna contracts for all their clinicians, and the file lists what Aetna pays the platform for each session. You already know what your platform pays you for an Aetna 60-minute session, so you can put the two side by side. For a master's-level clinician, Aetna pays Headway {money(hw_lo)} or {money(hw_up)}. Those rates are the same everywhere in Florida: they do not change by region.</p>
       <div class="card">
-        <div class="legend"><span><i class="k0"></i>Lower set, or the only one</span><span><i class="k1"></i>Upper set</span><span><i class="kr"></i>Solo standard rate</span></div>
+        <div class="legend"><span><i class="k0"></i>Lower set, or the only one</span><span><i class="k1"></i>Upper set</span></div>
         {platforms_chart()}
       </div>
       {platforms_table()}
@@ -584,16 +609,18 @@ page = f"""<!doctype html>
         <div class="legend"><span><i class="k0"></i>Solo practice</span><span><i class="k1"></i>Group practice</span><span><i class="kb"></i>Middle half</span><span><i class="kr"></i>Standard rate</span></div>
         <h3>Georgia</h3>
         {code_chart("GA")}
-        <h3>Florida</h3>
-        {code_chart("FL")}
+        <h3>North and central Florida</h3>
+        {code_chart("FL-North")}
+        <h3>South Florida and Tampa Bay</h3>
+        {code_chart("FL-South")}
       </div>
     </section>
 
     <section id="cohorts">
       <h2>Are new contracts lower? Master's-level solo practices paid more than the standard rate, by NPI year</h2>
-      <p>Share of master's-level solo practices Aetna pays more than its standard rate for 90837, grouped by when the clinician's NPI was issued (a rough stand-in for when they started practicing). The number in brackets is how many practices each bar rests on.</p>
+      <p>Share of master's-level solo practices Aetna pays more than its standard rate for 90837 (in Florida, their region's), grouped by when the clinician's NPI was issued (a rough stand-in for when they started practicing). The number in brackets is how many practices each bar rests on.</p>
       <div class="card">
-        <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>Florida</span></div>
+        <div class="legend"><span><i class="k0"></i>Georgia</span><span><i class="k1"></i>FL north and central</span><span><i class="k2"></i>FL south and Tampa Bay</span></div>
         {cohort_html}
       </div>
       <p class="sub">Georgia has very few master's-level solo practices with NPIs from 2020 on ({", ".join(cohort_dropped)}: fewer than 11 each), so those years are left out rather than shown on a handful of practices.</p>
