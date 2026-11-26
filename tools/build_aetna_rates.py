@@ -297,9 +297,9 @@ def takeit_table() -> str:
     rows = sorted((r for r in standard if r["code"] == "90837"),
                   key=lambda r: (0 if r["state"] == "GA" else 1, order.index(r["license"])))
     body = [[STATE[r["state"]], lic(r["license"]), money(r["standard"]), f"{r['practices']:,}", pct(r["pct_on"]),
-             pct(r["pct_above"]), money(r["median_above"])] for r in rows]
+             pct(r["pct_above"]), money(r["median_above"]), pct(100 * r["below"] / r["practices"])] for r in rows]
     return table(["State", "License", "Standard rate", "Solo practices", "Paid exactly it", "Paid more",
-                  "Median if paid more"], body, 2)
+                  "Median if paid more", "Paid less"], body, 2)
 
 
 def platforms_table() -> str:
@@ -313,9 +313,9 @@ def full_table() -> str:
     rows.sort(key=lambda r: (0 if r["state"] == "GA" else 1, LICENSES.index(r["license"]), CODES.index(r["code"]),
                              0 if r["practice"] == "solo" else 1))
     body = [[STATE[r["state"]], lic(r["license"]), CODE_LABEL[r["code"]], r["practice"], f"{r['practices']:,}",
-             money(r["p10"]), money(r["p25"]), money(r["median"]), money(r["p75"]), money(r["p90"])] for r in rows]
-    return table(["State", "License", "Code", "Practice", "Practices", "Low end (10%)", "Middle half from", "Median",
-                  "Middle half to", "High end (90%)"], body, 4)
+             money(r["low"]), money(r["p25"]), money(r["median"]), money(r["p75"]), money(r["high"])] for r in rows]
+    return table(["State", "License", "Code", "Practice", "Practices", "Low", "Middle half from", "Median",
+                  "Middle half to", "High"], body, 4)
 
 
 # ---------------------------------------------------------------- page
@@ -505,7 +505,7 @@ page = f"""<!doctype html>
           <li>The license rates: most practices list three rates per code at 75%, 85% and 100% of the top one, without saying which is which. A few contracts in the same file label their rates with Aetna's license modifiers (AJ/HO master's level, TD nurse, AF/AH physician or psychologist), and those sit at exactly the same 75/85/100. Each clinician here gets the rate for their own license. Outside support: Aetna's own March 2022 provider update calls 85% of the physician rate its "standard policy for mid-level practitioners" (nurse practitioners, physician assistants, nurse midwives, clinical nurse specialists), and Serif Health's September 2026 analysis of Aetna's data describes the same "standard rate ladder": nurse practitioners at 85% and master's level at 75% of the PhD rate. No public Aetna document found states the 75% for master's level in its own words.</li>
           <li>Florida solo practices whose rates follow the 75/85/100 pattern: {pct(cov_fl)}; Georgia: {pct(cov_ga)}. The rest (mostly older round-dollar schedules in Georgia) don't say which rate is which license and are left out.</li>
           <li>Standard rate: the state's most common rate for that license and code. "Exactly the standard rate" means paid that rate, to the cent.</li>
-          <li>Low end (10%) and high end (90%), in the full table: one practice in ten is paid less than the low end, and one in ten is paid more than the high end.</li>
+          <li>Low and high: the lowest and highest rate at least 11 practices are paid (or the 10% and 90% marks if those are further out), so no single practice's rate is shown.</li>
           <li>A few contracts (about 1%) also split each rate into office and non-office (facility, telehealth) prices. Only office or all-places prices are used here.</li>
           <li>Solo means a tax ID with exactly one clinician anywhere in the file. Everything else is a group. Platforms: the rates are what Aetna pays the platform's tax ID (Florida, 90837, read with the same 75/85/100 pattern). What a platform passes on to its clinicians is not in the file.</li>
           <li>Rates under $20 were dropped as placeholders. Some listed contracts are dormant: a clinician can be in the file and rarely bill Aetna.</li>
@@ -547,12 +547,13 @@ page = f"""<!doctype html>
 
     <section id="standard-rate">
       <h2>How often Aetna pays solo practices exactly its standard rate</h2>
-      <p>In Florida, Aetna pays {pct(fl_m["pct_on"])} of master's-level solo practices exactly its standard rate for 90837. The rest are paid more, nearly all on one other rate (median {money(fl_m["median_above"])}).{" None is paid less." if none_below else ""} In Georgia, Aetna pays {pct(ga_m["pct_on"])} of them exactly the standard rate, and the rest more (median {money(ga_m["median_above"])}).</p>
+      <p>In Florida, Aetna pays {pct(fl_m["pct_on"])} of master's-level solo practices exactly its standard rate for 90837. Most of the rest are paid more, nearly all on one other rate (median {money(fl_m["median_above"])}){"; none is paid less." if none_below else f'; {fl_m["below"]} of {fl_m["practices"]:,} are paid less.'} In Georgia, Aetna pays {pct(ga_m["pct_on"])} of them exactly the standard rate; {ga_m["above"]} of {ga_m["practices"]:,} are paid more (median {money(ga_m["median_above"])}) and {ga_m["below"]} less.</p>
       <div class="card">
         <div class="legend"><span><i class="kon"></i>Exactly the standard rate</span><span><i class="kab"></i>Paid more</span>{"" if none_below else '<span><i class="kbe"></i>Paid less</span>'}</div>
         {takeit_chart()}
       </div>
       {takeit_table()}
+      <p>Some Florida contracts pay less. A second Aetna fee schedule pays master's-level clinicians $60 for a 45-minute session and the same $60 for a 60-minute one (psychologists on it are paid $70). Most of the practices on it are community mental-health agencies; the independent practices on it have contracts dating from 2005 to 2009. Clinicians who joined those agencies recently are on it too, but no independent practice that contracted recently is. If you are independent and Aetna offers you $60, ask which fee schedule the offer is on and which plans it covers.</p>
     </section>
 
     <section id="by-license">
