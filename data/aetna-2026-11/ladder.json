@@ -90,6 +90,96 @@
    "np": 78.14,
    "doctoral": 91.93,
    "practices_on_it": 65
+  },
+  {
+   "key": "FL-North|90837",
+   "state": "FL-North",
+   "code": "90837",
+   "masters": 102.94,
+   "np": 116.66,
+   "doctoral": 137.25,
+   "practices_on_it": 2378
+  },
+  {
+   "key": "FL-North|90834",
+   "state": "FL-North",
+   "code": "90834",
+   "masters": 68.59,
+   "np": 77.73,
+   "doctoral": 91.45,
+   "practices_on_it": 2363
+  },
+  {
+   "key": "FL-North|90832",
+   "state": "FL-North",
+   "code": "90832",
+   "masters": 51.28,
+   "np": 58.11,
+   "doctoral": 68.37,
+   "practices_on_it": 2360
+  },
+  {
+   "key": "FL-North|90791",
+   "state": "FL-North",
+   "code": "90791",
+   "masters": 105.59,
+   "np": 119.66,
+   "doctoral": 140.78,
+   "practices_on_it": 2373
+  },
+  {
+   "key": "FL-North|90847",
+   "state": "FL-North",
+   "code": "90847",
+   "masters": 86.16,
+   "np": 97.65,
+   "doctoral": 114.88,
+   "practices_on_it": 2343
+  },
+  {
+   "key": "FL-South|90837",
+   "state": "FL-South",
+   "code": "90837",
+   "masters": 79.29,
+   "np": 89.86,
+   "doctoral": 105.72,
+   "practices_on_it": 4897
+  },
+  {
+   "key": "FL-South|90834",
+   "state": "FL-South",
+   "code": "90834",
+   "masters": 68.95,
+   "np": 78.14,
+   "doctoral": 91.93,
+   "practices_on_it": 4953
+  },
+  {
+   "key": "FL-South|90832",
+   "state": "FL-South",
+   "code": "90832",
+   "masters": 52.72,
+   "np": 59.75,
+   "doctoral": 70.3,
+   "practices_on_it": 4912
+  },
+  {
+   "key": "FL-South|90791",
+   "state": "FL-South",
+   "code": "90791",
+   "masters": 93.28,
+   "np": 105.71,
+   "doctoral": 124.37,
+   "practices_on_it": 4967
+  },
+  {
+   "key": "FL-South|90847",
+   "state": "FL-South",
+   "code": "90847",
+   "masters": 68.95,
+   "np": 78.14,
+   "doctoral": 91.93,
+   "practices_on_it": 4929
   }
  ]
 }
