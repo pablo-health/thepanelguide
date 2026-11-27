@@ -1,0 +1,77 @@
+{
+  "source": "Aetna in-network rate file pl-sk (2026-11-05): what Aetna pays each platform tax ID, Florida 90837, by license rung",
+  "rows": [
+    {
+      "key": "Headway|lower",
+      "platform": "Headway",
+      "clinicians": 12130,
+      "set": "lower",
+      "masters": 93.28,
+      "np": 105.71,
+      "doctoral": 124.37
+    },
+    {
+      "key": "Headway|upper",
+      "platform": "Headway",
+      "clinicians": 12130,
+      "set": "upper",
+      "masters": 147.18,
+      "np": 166.81,
+      "doctoral": 196.24
+    },
+    {
+      "key": "Alma|lower",
+      "platform": "Alma",
+      "clinicians": 3205,
+      "set": "lower",
+      "masters": 120.67,
+      "np": 136.75,
+      "doctoral": 160.88
+    },
+    {
+      "key": "Alma|upper",
+      "platform": "Alma",
+      "clinicians": 3205,
+      "set": "upper",
+      "masters": 130.49,
+      "np": 147.89,
+      "doctoral": 173.98
+    },
+    {
+      "key": "Rula|lower",
+      "platform": "Rula",
+      "clinicians": 1278,
+      "set": "lower",
+      "masters": 116.09,
+      "np": 131.56,
+      "doctoral": 154.78
+    },
+    {
+      "key": "Rula|upper",
+      "platform": "Rula",
+      "clinicians": 1278,
+      "set": "upper",
+      "masters": 130.78,
+      "np": 148.21,
+      "doctoral": 174.37
+    },
+    {
+      "key": "Grow|one",
+      "platform": "Grow (likely)",
+      "clinicians": 5461,
+      "set": "one",
+      "masters": 146.78,
+      "np": null,
+      "doctoral": null
+    },
+    {
+      "key": "Tava|one",
+      "platform": "Tava (likely)",
+      "clinicians": 852,
+      "set": "one",
+      "masters": 100,
+      "np": null,
+      "doctoral": 117.72
+    }
+  ]
+}

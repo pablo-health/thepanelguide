@@ -1,0 +1,365 @@
+{
+ "source": "Aetna Life Insurance Co. in-network rate file pl-sk (2026-11-05), matched to the NPI registry (Nov 2026); aggregates by Pablo",
+ "rows": [
+  {
+   "key": "FL|solo|90837",
+   "state": "FL",
+   "practice": "solo",
+   "code": "90837",
+   "practices": 2632,
+   "mapped": 2598,
+   "pct_mapped": 98.7
+  },
+  {
+   "key": "FL|group|90837",
+   "state": "FL",
+   "practice": "group",
+   "code": "90837",
+   "practices": 7806,
+   "mapped": 7527,
+   "pct_mapped": 96.4
+  },
+  {
+   "key": "FL|solo|90834",
+   "state": "FL",
+   "practice": "solo",
+   "code": "90834",
+   "practices": 2617,
+   "mapped": 2563,
+   "pct_mapped": 97.9
+  },
+  {
+   "key": "FL|group|90834",
+   "state": "FL",
+   "practice": "group",
+   "code": "90834",
+   "practices": 7734,
+   "mapped": 7418,
+   "pct_mapped": 95.9
+  },
+  {
+   "key": "FL|solo|90832",
+   "state": "FL",
+   "practice": "solo",
+   "code": "90832",
+   "practices": 2560,
+   "mapped": 2547,
+   "pct_mapped": 99.5
+  },
+  {
+   "key": "FL|group|90832",
+   "state": "FL",
+   "practice": "group",
+   "code": "90832",
+   "practices": 7621,
+   "mapped": 7392,
+   "pct_mapped": 97.0
+  },
+  {
+   "key": "FL|solo|90791",
+   "state": "FL",
+   "practice": "solo",
+   "code": "90791",
+   "practices": 2650,
+   "mapped": 2590,
+   "pct_mapped": 97.7
+  },
+  {
+   "key": "FL|group|90791",
+   "state": "FL",
+   "practice": "group",
+   "code": "90791",
+   "practices": 7860,
+   "mapped": 7525,
+   "pct_mapped": 95.7
+  },
+  {
+   "key": "FL|solo|90847",
+   "state": "FL",
+   "practice": "solo",
+   "code": "90847",
+   "practices": 2588,
+   "mapped": 2550,
+   "pct_mapped": 98.5
+  },
+  {
+   "key": "FL|group|90847",
+   "state": "FL",
+   "practice": "group",
+   "code": "90847",
+   "practices": 7452,
+   "mapped": 7201,
+   "pct_mapped": 96.6
+  },
+  {
+   "key": "GA|solo|90837",
+   "state": "GA",
+   "practice": "solo",
+   "code": "90837",
+   "practices": 149,
+   "mapped": 141,
+   "pct_mapped": 94.6
+  },
+  {
+   "key": "GA|group|90837",
+   "state": "GA",
+   "practice": "group",
+   "code": "90837",
+   "practices": 1364,
+   "mapped": 1225,
+   "pct_mapped": 89.8
+  },
+  {
+   "key": "GA|solo|90834",
+   "state": "GA",
+   "practice": "solo",
+   "code": "90834",
+   "practices": 129,
+   "mapped": 119,
+   "pct_mapped": 92.2
+  },
+  {
+   "key": "GA|group|90834",
+   "state": "GA",
+   "practice": "group",
+   "code": "90834",
+   "practices": 1339,
+   "mapped": 1188,
+   "pct_mapped": 88.7
+  },
+  {
+   "key": "GA|solo|90832",
+   "state": "GA",
+   "practice": "solo",
+   "code": "90832",
+   "practices": 99,
+   "mapped": 96,
+   "pct_mapped": 97.0
+  },
+  {
+   "key": "GA|group|90832",
+   "state": "GA",
+   "practice": "group",
+   "code": "90832",
+   "practices": 1301,
+   "mapped": 1179,
+   "pct_mapped": 90.6
+  },
+  {
+   "key": "GA|solo|90791",
+   "state": "GA",
+   "practice": "solo",
+   "code": "90791",
+   "practices": 151,
+   "mapped": 136,
+   "pct_mapped": 90.1
+  },
+  {
+   "key": "GA|group|90791",
+   "state": "GA",
+   "practice": "group",
+   "code": "90791",
+   "practices": 1383,
+   "mapped": 1228,
+   "pct_mapped": 88.8
+  },
+  {
+   "key": "GA|solo|90847",
+   "state": "GA",
+   "practice": "solo",
+   "code": "90847",
+   "practices": 113,
+   "mapped": 107,
+   "pct_mapped": 94.7
+  },
+  {
+   "key": "GA|group|90847",
+   "state": "GA",
+   "practice": "group",
+   "code": "90847",
+   "practices": 1190,
+   "mapped": 1054,
+   "pct_mapped": 88.6
+  },
+  {
+   "key": "FL-North|solo|90837",
+   "state": "FL-North",
+   "practice": "solo",
+   "code": "90837",
+   "practices": 947,
+   "mapped": 940,
+   "pct_mapped": 99.3
+  },
+  {
+   "key": "FL-North|group|90837",
+   "state": "FL-North",
+   "practice": "group",
+   "code": "90837",
+   "practices": 2486,
+   "mapped": 2386,
+   "pct_mapped": 96.0
+  },
+  {
+   "key": "FL-North|solo|90834",
+   "state": "FL-North",
+   "practice": "solo",
+   "code": "90834",
+   "practices": 937,
+   "mapped": 928,
+   "pct_mapped": 99.0
+  },
+  {
+   "key": "FL-North|group|90834",
+   "state": "FL-North",
+   "practice": "group",
+   "code": "90834",
+   "practices": 2438,
+   "mapped": 2333,
+   "pct_mapped": 95.7
+  },
+  {
+   "key": "FL-North|solo|90832",
+   "state": "FL-North",
+   "practice": "solo",
+   "code": "90832",
+   "practices": 931,
+   "mapped": 927,
+   "pct_mapped": 99.6
+  },
+  {
+   "key": "FL-North|group|90832",
+   "state": "FL-North",
+   "practice": "group",
+   "code": "90832",
+   "practices": 2420,
+   "mapped": 2331,
+   "pct_mapped": 96.3
+  },
+  {
+   "key": "FL-North|solo|90791",
+   "state": "FL-North",
+   "practice": "solo",
+   "code": "90791",
+   "practices": 946,
+   "mapped": 938,
+   "pct_mapped": 99.2
+  },
+  {
+   "key": "FL-North|group|90791",
+   "state": "FL-North",
+   "practice": "group",
+   "code": "90791",
+   "practices": 2463,
+   "mapped": 2359,
+   "pct_mapped": 95.8
+  },
+  {
+   "key": "FL-North|solo|90847",
+   "state": "FL-North",
+   "practice": "solo",
+   "code": "90847",
+   "practices": 935,
+   "mapped": 929,
+   "pct_mapped": 99.4
+  },
+  {
+   "key": "FL-North|group|90847",
+   "state": "FL-North",
+   "practice": "group",
+   "code": "90847",
+   "practices": 2345,
+   "mapped": 2268,
+   "pct_mapped": 96.7
+  },
+  {
+   "key": "FL-South|solo|90837",
+   "state": "FL-South",
+   "practice": "solo",
+   "code": "90837",
+   "practices": 1685,
+   "mapped": 1658,
+   "pct_mapped": 98.4
+  },
+  {
+   "key": "FL-South|group|90837",
+   "state": "FL-South",
+   "practice": "group",
+   "code": "90837",
+   "practices": 5320,
+   "mapped": 5141,
+   "pct_mapped": 96.6
+  },
+  {
+   "key": "FL-South|solo|90834",
+   "state": "FL-South",
+   "practice": "solo",
+   "code": "90834",
+   "practices": 1680,
+   "mapped": 1635,
+   "pct_mapped": 97.3
+  },
+  {
+   "key": "FL-South|group|90834",
+   "state": "FL-South",
+   "practice": "group",
+   "code": "90834",
+   "practices": 5296,
+   "mapped": 5085,
+   "pct_mapped": 96.0
+  },
+  {
+   "key": "FL-South|solo|90832",
+   "state": "FL-South",
+   "practice": "solo",
+   "code": "90832",
+   "practices": 1629,
+   "mapped": 1620,
+   "pct_mapped": 99.4
+  },
+  {
+   "key": "FL-South|group|90832",
+   "state": "FL-South",
+   "practice": "group",
+   "code": "90832",
+   "practices": 5201,
+   "mapped": 5061,
+   "pct_mapped": 97.3
+  },
+  {
+   "key": "FL-South|solo|90791",
+   "state": "FL-South",
+   "practice": "solo",
+   "code": "90791",
+   "practices": 1704,
+   "mapped": 1652,
+   "pct_mapped": 96.9
+  },
+  {
+   "key": "FL-South|group|90791",
+   "state": "FL-South",
+   "practice": "group",
+   "code": "90791",
+   "practices": 5397,
+   "mapped": 5166,
+   "pct_mapped": 95.7
+  },
+  {
+   "key": "FL-South|solo|90847",
+   "state": "FL-South",
+   "practice": "solo",
+   "code": "90847",
+   "practices": 1653,
+   "mapped": 1621,
+   "pct_mapped": 98.1
+  },
+  {
+   "key": "FL-South|group|90847",
+   "state": "FL-South",
+   "practice": "group",
+   "code": "90847",
+   "practices": 5107,
+   "mapped": 4933,
+   "pct_mapped": 96.6
+  }
+ ]
+}
