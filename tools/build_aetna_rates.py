@@ -508,7 +508,7 @@ page = f"""<!doctype html>
     <div class="hero">
       <h1>{e(TITLE)}</h1>
       <p class="dateline">Georgia and Florida · Aetna's published rate file, Nov 5, 2026</p>
-      <p class="byline">By Kurt Niemi, who builds <a href="{e(OFFER)}">Pablo</a>. Hachi, an AI assistant, ran the numbers; Kurt questioned each step until they made sense.</p>
+      <p class="byline">By Kurt Niemi, who builds <a href="{e(OFFER)}">Pablo</a>.</p>
       <figure class="top">
         <img src="hachi-grilled.jpg" width="1200" height="800" alt="Illustration: a small shiba plushie, Hachi, sits at a table in an interrogation room while a man points at spreadsheets of insurance rates. Caption: Kurt grilled his AI assistant, until the numbers made sense.">
         <figcaption>Hachi is the AI assistant that ran the numbers. It took a few rounds.</figcaption>
