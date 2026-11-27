@@ -513,6 +513,7 @@ page = f"""<!doctype html>
         <img src="hachi-grilled.jpg" width="1200" height="800" alt="Illustration: a small shiba plushie, Hachi, sits at a table in an interrogation room while a man points at spreadsheets of insurance rates. Caption: Kurt grilled his AI assistant, until the numbers made sense.">
         <figcaption>Hachi is the AI assistant that ran the numbers. It took a few rounds.</figcaption>
       </figure>
+      <p class="byline">This is my reading of the rates Aetna publishes. It is general information, not legal, tax or billing advice.</p>
       <details class="method" id="method">
         <summary>How we figured this out, and the full method</summary>
         <p>Aetna publishes every rate it has agreed to in a huge public file. The first look made no sense: almost every practice had three different rates listed for the same session code, and the file gave no hint which one applied. An easy explanation was "plan tiers" or "office versus telehealth", and we nearly stopped there.</p>
